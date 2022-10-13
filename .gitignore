@@ -1,0 +1,8 @@
+*.log
+*.dmp
+*.sift
+*.sift.hex
+*.elf
+*.out
+*.sqlite3*
+sim.info
