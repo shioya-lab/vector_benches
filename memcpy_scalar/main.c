@@ -1,7 +1,8 @@
+#include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include "common.h"
 
-// void copy_data_vec(int8_t *dest_data, int8_t *source_data, int data_num);
-// void copy_data_mask_vec(int8_t *dest_data, int8_t *source_data, int8_t *mask, int data_num);
 
 #include "data.h"
 
@@ -30,10 +31,10 @@ int check_data (const int64_t *vec_data, const int64_t *scalar_data, const int d
 
 void copy_data_scalar(int8_t *dest_data, int8_t *source_data, const int data_num)
 {
-  // for (int i = 0; i < data_num; i++) {
-  //   dest_data[i] = source_data[i];
-  // }
+  // roi_start();
+  boom_disable_ooo();
   memcpy(dest_data, source_data, data_num);
+  // roi_stop();
 }
 
 
@@ -51,15 +52,17 @@ int test_mask();
 
 int main()
 {
-  if (test_0() != 0) {
-    return 10;
-  }
-  if (test_vl() != 0) {
-    return 20;
-  }
-  if (test_mask() != 0) {
-    return 30;
-  }
+  test_0();
+  // if (test_0() != 0) {
+  //   return 10;
+  // }
+  // if (test_vl() != 0) {
+  //   return 20;
+  // }
+  // if (test_mask() != 0) {
+  //   return 30;
+  // }
+  printf("Finish\n");
   return 0;
 }
 
@@ -69,7 +72,7 @@ int test_0()
   format_array();
 
   const int data_num = DATA_NUM * sizeof(int32_t) / sizeof(int8_t);
-  // copy_data_vec   ((int8_t *)vec_data,    (int8_t *)source_data, data_num);
+
   copy_data_scalar((int8_t *)scalar_data, (int8_t *)source_data, data_num);
 
   return 0;

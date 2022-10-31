@@ -104,3 +104,20 @@ void init_array_one_2d(double **ar, int n, int m) {
     for (int j = 0; j < m; ++j)
       ar[i][j] = 1;
 }
+
+void boom_disable_ooo ()
+{
+  // 0x7c1 is chicken bit
+  asm volatile ("csrwi 0x7c1, 0x8");
+}
+
+void roi_start ()
+{
+  asm volatile ("csrsi 0x7c1, 4");
+}
+
+
+void roi_stop ()
+{
+  asm volatile ("csrci 0x7c1, 4");
+}

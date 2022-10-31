@@ -1,5 +1,7 @@
 .PHONY : run
 
+include common.mk
+
 SNIPER_ROOT = ../../sniper
 SPIKE = $(SNIPER_ROOT)/riscv/riscv-tools/RV64G/build-isa-sim/spike
 PK    = $(SNIPER_ROOT)/riscv/riscv-tools/RV64G/riscv64-unknown-elf/bin/pk
@@ -12,11 +14,6 @@ debug: test.sift
 
 debug_cui: test.sift
 	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv.cfg --traces=test.sift --gdb --gdb-wait
-
-test.sift : test.elf
-	$(SPIKE) -l --isa=rv64gcv --log-commits --sift $@ $(PK) test.elf > test.spike.log 2>&1
-	hexdump -C $@ > $@.hex
-	$(SNIPER_ROOT)/sift/siftdump $@ > $@.dmp 2>&1
 
 CFLAGS = -DPREALLOCATE=1 -static -mcmodel=medany -std=gnu99 -O2 \
 	-ffast-math -fno-common -fno-builtin -fno-builtin-printf -nostdlib -nostartfiles -lm -lgcc -T test.ld
