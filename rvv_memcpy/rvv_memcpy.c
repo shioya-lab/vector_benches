@@ -13,8 +13,8 @@ void *memcpy_vec(void *dst, void *src, size_t n) {
   return save;
 }
 
-int main() {
-  const int N = 127;
+int __attribute__((optimize("O0"))) main() {
+  const int N = 32 * 1024 / sizeof(double);
   const uint32_t seed = 0xdeadbeef;
   srand(seed);
 
@@ -25,7 +25,14 @@ int main() {
   // compute
   double golden[N], actual[N];
   memcpy(golden, A, sizeof(A));
+
   memcpy_vec(actual, A, sizeof(A));
+
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+  memcpy_vec(actual, A, sizeof(A));
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   // compare
   puts(compare_1d(golden, actual, N) ? "pass" : "fail");

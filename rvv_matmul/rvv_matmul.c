@@ -55,7 +55,11 @@ int main() {
   double **golden = alloc_array_2d(N, M);
   double **actual = alloc_array_2d(N, M);
   matmul_golden(A, B, golden, N, M, O);
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
   matmul(A, B, actual, N, M, O);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   // compare
   puts(compare_2d(golden, actual, N, M) ? "pass" : "fail");

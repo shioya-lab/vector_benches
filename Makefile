@@ -21,8 +21,9 @@ SUBDIRSCLEAN = $(addsuffix clean,$(DIR))
 all: $(DIR)
 
 $(DIR):
-	$(MAKE) -C $@ run
+	$(MAKE) -C $@ run-ooo
 	$(MAKE) -C $@ run-io
+	$(MAKE) -C $@ run-vio
 
 clean: $(SUBDIRSCLEAN)
 

@@ -1,10 +1,8 @@
 .PHONY : run
 
-include common.mk
+SOURCE_FILES = rvv_strncpy.c
 
-SNIPER_ROOT = ../../sniper
-SPIKE = $(SNIPER_ROOT)/riscv/riscv-tools/RV64G/build-isa-sim/spike
-PK    = $(SNIPER_ROOT)/riscv/riscv-tools/RV64G/riscv64-unknown-elf/bin/pk
+include common.mk
 
 run: test.sift
 	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv.cfg --traces=test.sift > cycle.log 2>&1
@@ -14,13 +12,3 @@ debug: test.sift
 
 debug_cui: test.sift
 	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv.cfg --traces=test.sift --gdb --gdb-wait
-
-CFLAGS = -DPREALLOCATE=1 -static -mcmodel=medany -std=gnu99 -O2 \
-	-ffast-math -fno-common -fno-builtin -fno-builtin-printf -nostdlib -nostartfiles -lm -lgcc -T test.ld
-
-test.elf: rvv_strncpy.c
-	riscv64-unknown-elf-gcc -march=rv64gcv -g -O3 $^ -o $@
-	riscv64-unknown-elf-objdump -D $@ > $@.dmp
-
-clean:
-	$(RM) -rf test.elf.dmp test.elf *.log *.out *.info *.sift* *.sqlite3

@@ -58,7 +58,11 @@ int main() {
   double golden_sum, actual_sum;
   int golden_count, actual_count;
   reduce_golden(A, B, &golden_sum, &golden_count, N);
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
   reduce(A, B, &actual_sum, &actual_count, N);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   // compare
   puts(golden_sum - actual_sum < 1e-6 && golden_count == actual_count ? "pass"

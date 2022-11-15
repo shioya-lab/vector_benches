@@ -58,7 +58,12 @@ int main() {
   strcpy(golden, s0);
   strcpy(actual, s0);
   strncpy(golden, s1, count);
+
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
   strncpy_vec(actual, s1, count);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   // compare
   puts(compare_string(golden, actual, N) ? "pass" : "fail");

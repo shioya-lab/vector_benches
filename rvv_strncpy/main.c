@@ -71,8 +71,13 @@ int test_0()
 
   format_array();
 
+
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
   const int data_num = DATA_NUM * sizeof(int32_t) / sizeof(int8_t);
   copy_data_vec   ((int8_t *)vec_data,    (int8_t *)source_data, data_num);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   // return check_data((int64_t *)vec_data, (int64_t *)scalar_data, DATA_NUM * sizeof(int32_t) / sizeof(int64_t));
   return 0;

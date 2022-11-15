@@ -73,9 +73,12 @@ int fp_eq(float reference, float actual, float relErr)
   return fabsf(actual - reference) < absErr;
 }
 
-
+int main() __attribute((optimize("O0")));
 int main() {
   saxpy_golden(N, 55.66, input, output_golden);
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+
   saxpy_vec(N, 55.66, input, output);
   int pass = 1;
   for (int i = 0; i < N; i++) {
@@ -86,5 +89,10 @@ int main() {
   }
   if (pass)
     printf("passed\n");
+
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+  saxpy_vec(N, 55.66, input, output);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+
   return (pass == 0);
 }

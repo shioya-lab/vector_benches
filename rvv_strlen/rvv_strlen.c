@@ -34,7 +34,11 @@ int main() {
   // compute
   size_t golden, actual;
   golden = strlen(s0);
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
   actual = strlen_vec(s0);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   // compare
   puts(golden == actual ? "pass" : "fail");

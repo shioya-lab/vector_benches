@@ -35,3 +35,5 @@ copy_data_vec:
 #     add     a0, a0, t0  	# Bump pointer
 #     bnez    a3, _loop    	# Any more?
 #     ret                 	# Return
+
+scalar_st_ld_test:

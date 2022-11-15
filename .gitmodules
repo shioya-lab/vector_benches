@@ -1,0 +1,3 @@
+[submodule "rivec1.0"]
+	path = rivec1.0
+	url = https://github.com/jiegec/riscv-vectorized-benchmark-suite.git

@@ -49,6 +49,7 @@ int test_0();
 int test_vl();
 // int test_mask();
 
+void __attribute__((optimize("O0")))
 int main()
 {
   // fprintf(stderr, "hogegege main()\n");

@@ -37,7 +37,11 @@ int main() {
   // compute
   char golden[N], actual[N];
   strcpy(golden, s0);
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
   strcpy_vec(actual, s0);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   // compare
   puts(strcmp(golden, actual) == 0 ? "pass" : "fail");

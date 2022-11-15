@@ -37,7 +37,12 @@ int main() {
   // compute
   int golden, actual;
   golden = strcmp(s0, s1);
+
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
   actual = strcmp_vec(s0, s1);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   // compare
   puts(golden == actual ? "pass" : "fail");

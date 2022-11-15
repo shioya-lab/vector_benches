@@ -45,7 +45,11 @@ int main() {
   // compute
   double golden[N], actual[N];
   branch_golden(A, B, golden, N, constant);
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
   branch(A, B, actual, N, constant);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   // compare
   puts(compare_1d(golden, actual, N) ? "pass" : "fail");

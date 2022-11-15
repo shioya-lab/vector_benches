@@ -40,7 +40,11 @@ int main() {
   // compute
   double golden[N], actual[N];
   index_golden(golden, B, C, N);
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
   index_(actual, B, C, N);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   // compare
   puts(compare_1d(golden, actual, N) ? "pass" : "fail");
