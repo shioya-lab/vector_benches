@@ -42,7 +42,7 @@ char *strncpy_vec(char *dst, char *src, size_t count) {
   return save;
 }
 
-int main() {
+int __attribute__((optimize("O0"))) main() {
   const int N = 1320;
   const uint32_t seed = 0xdeadbeef;
   srand(seed);
@@ -58,6 +58,8 @@ int main() {
   strcpy(golden, s0);
   strcpy(actual, s0);
   strncpy(golden, s1, count);
+
+  strncpy_vec(actual, s1, count);
 
   uint64_t start_cycle;
   uint64_t stop_cycle;

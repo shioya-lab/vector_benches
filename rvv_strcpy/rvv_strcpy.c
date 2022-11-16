@@ -25,7 +25,7 @@ char *strcpy_vec(char *dst, const char *src) {
   return save;
 }
 
-int main() {
+int __attribute__((optimize("O0"))) main() {
   const int N = 100;
   const uint32_t seed = 0xdeadbeef;
   srand(seed);
@@ -37,6 +37,9 @@ int main() {
   // compute
   char golden[N], actual[N];
   strcpy(golden, s0);
+
+  strcpy_vec(actual, s0);
+
   uint64_t start_cycle;
   uint64_t stop_cycle;
   asm volatile ("csrr %0, cycle":"=r"(start_cycle));

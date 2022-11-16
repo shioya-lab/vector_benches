@@ -32,7 +32,7 @@ int check_data (const int64_t *vec_data, const int64_t *scalar_data, const int d
 void copy_data_scalar(int8_t *dest_data, int8_t *source_data, const int data_num)
 {
   // roi_start();
-  boom_disable_ooo();
+  // boom_disable_ooo();
   memcpy(dest_data, source_data, data_num);
   // roi_stop();
 }

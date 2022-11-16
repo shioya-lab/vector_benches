@@ -24,7 +24,7 @@ int strcmp_vec(const char *src1, const char *src2) {
   return *src1 - *src2;
 }
 
-int main() {
+int __attribute__((optimize("O0"))) main() {
   const int N = 1023;
   const uint32_t seed = 0xdeadbeef;
   srand(seed);
@@ -37,6 +37,8 @@ int main() {
   // compute
   int golden, actual;
   golden = strcmp(s0, s1);
+
+  actual = strcmp_vec(s0, s1);
 
   uint64_t start_cycle;
   uint64_t stop_cycle;

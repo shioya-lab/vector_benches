@@ -27,7 +27,7 @@ void branch(double *a, double *b, double *c, int n, double constant) {
   }
 }
 
-int main() {
+int __attribute__((optimize("O0"))) main() {
   const int N = 31;
   const double constant = 7122.0;
   const uint32_t seed = 0xdeadbeef;
@@ -45,6 +45,8 @@ int main() {
   // compute
   double golden[N], actual[N];
   branch_golden(A, B, golden, N, constant);
+  branch(A, B, actual, N, constant);
+
   uint64_t start_cycle;
   uint64_t stop_cycle;
   asm volatile ("csrr %0, cycle":"=r"(start_cycle));

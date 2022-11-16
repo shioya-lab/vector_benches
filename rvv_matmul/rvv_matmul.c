@@ -38,7 +38,7 @@ void matmul(double **a, double **b, double **c, int n, int m, int o) {
   }
 }
 
-int main() {
+int __attribute__((optimize("O0"))) main() {
   const int N = 8;
   const int M = 8;
   const int O = 7;

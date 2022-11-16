@@ -98,17 +98,14 @@ int fp_eq(float reference, float actual, float relErr)
   return fabsf(actual - reference) < absErr;
 }
 
-int main() {
+int __attribute__((optimize("O0"))) main() {
   // golden
   memcpy(golden_array, b_array, OUTPUT_LEN * sizeof(float));
   sgemm_golden();
   // vector
   memcpy(c_array, b_array, OUTPUT_LEN * sizeof(float));
-  uint64_t start_cycle;
-  uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+
   sgemm_vec(MLEN, NLEN, KLEN, a_array, KLEN, b_array, NLEN, c_array, NLEN);
-  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
 
   int pass = 1;
   for (int i = 0; i < OUTPUT_LEN; i++) {
@@ -119,5 +116,12 @@ int main() {
   }
   if (pass)
     printf("passed\n");
+
+  uint64_t start_cycle;
+  uint64_t stop_cycle;
+  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+  sgemm_vec(MLEN, NLEN, KLEN, a_array, KLEN, b_array, NLEN, c_array, NLEN);
+  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+
   return (pass == 0);
 }

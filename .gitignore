@@ -1,3 +1,8 @@
+*.log.tgz
+cycle.ooo
+cycle.vio
+cycle.io
+sim.cfg
 *.log
 *.dmp
 *.sift

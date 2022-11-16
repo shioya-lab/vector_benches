@@ -44,7 +44,7 @@ void reduce(double *a, double *b, double *result_sum, int *result_count,
   *result_count = count;
 }
 
-int main() {
+int __attribute__((optimize("O0"))) main() {
   const int N = 31;
   uint32_t seed = 0xdeadbeef;
   srand(seed);
@@ -58,6 +58,9 @@ int main() {
   double golden_sum, actual_sum;
   int golden_count, actual_count;
   reduce_golden(A, B, &golden_sum, &golden_count, N);
+
+  reduce(A, B, &actual_sum, &actual_count, N);
+
   uint64_t start_cycle;
   uint64_t stop_cycle;
   asm volatile ("csrr %0, cycle":"=r"(start_cycle));

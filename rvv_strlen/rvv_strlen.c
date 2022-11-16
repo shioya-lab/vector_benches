@@ -21,7 +21,7 @@ size_t strlen_vec(char *src) {
   return (size_t)(copy_src - src);
 }
 
-int main() {
+int __attribute__((optimize("O0"))) main() {
   const uint32_t seed = 0xdeadbeef;
   srand(seed);
 
@@ -34,6 +34,8 @@ int main() {
   // compute
   size_t golden, actual;
   golden = strlen(s0);
+  actual = strlen_vec(s0);
+
   uint64_t start_cycle;
   uint64_t stop_cycle;
   asm volatile ("csrr %0, cycle":"=r"(start_cycle));

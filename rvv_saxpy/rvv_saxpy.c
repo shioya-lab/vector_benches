@@ -73,8 +73,7 @@ int fp_eq(float reference, float actual, float relErr)
   return fabsf(actual - reference) < absErr;
 }
 
-int main() __attribute((optimize("O0")));
-int main() {
+int __attribute__((optimize("O0"))) main() {
   saxpy_golden(N, 55.66, input, output_golden);
   uint64_t start_cycle;
   uint64_t stop_cycle;

@@ -27,7 +27,7 @@ void index_(double *a, double *b, double *c, int n) {
   }
 }
 
-int main() {
+int __attribute__((optimize("O0"))) main() {
   const int N = 31;
   const uint32_t seed = 0xdeadbeef;
   srand(seed);
@@ -40,6 +40,9 @@ int main() {
   // compute
   double golden[N], actual[N];
   index_golden(golden, B, C, N);
+
+  index_(actual, B, C, N);
+
   uint64_t start_cycle;
   uint64_t stop_cycle;
   asm volatile ("csrr %0, cycle":"=r"(start_cycle));
