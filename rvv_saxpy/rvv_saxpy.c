@@ -89,9 +89,15 @@ int __attribute__((optimize("O0"))) main() {
   if (pass)
     printf("passed\n");
 
-  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
-  saxpy_vec(N, 55.66, input, output);
-  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+  for (int i = 0; i < 2; i++) {
+    if (i == 1) {
+      asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+    }
+    saxpy_vec(N, 55.66, input, output);
+    if (i == 1) {
+      asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+    }
+  }
 
   return (pass == 0);
 }
