@@ -11,3 +11,4 @@ sim.cfg
 *.out
 *.sqlite3*
 sim.info
+*.xz

@@ -63,9 +63,9 @@ int __attribute__((optimize("O0"))) main() {
 
   uint64_t start_cycle;
   uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
   reduce(A, B, &actual_sum, &actual_count, N);
-  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
 
   // compare
   puts(golden_sum - actual_sum < 1e-6 && golden_count == actual_count ? "pass"

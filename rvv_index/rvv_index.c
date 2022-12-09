@@ -41,13 +41,19 @@ int __attribute__((optimize("O0"))) main() {
   double golden[N], actual[N];
   index_golden(golden, B, C, N);
 
-  index_(actual, B, C, N);
-
   uint64_t start_cycle;
   uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
-  index_(actual, B, C, N);
-  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+  for (int i = 0; i < 2; i++) {
+    if (i == 1) {
+      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+    }
+    index_(actual, B, C, N);
+    if (i == 1) {
+      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+    } else {
+      asm volatile ("fence");
+    }
+  }
 
   // compare
   puts(compare_1d(golden, actual, N) ? "pass" : "fail");

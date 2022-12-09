@@ -49,9 +49,15 @@ int __attribute__((optimize("O0"))) main() {
 
   uint64_t start_cycle;
   uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
-  branch(A, B, actual, N, constant);
-  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+  for (int i = 0; i < 2; i++) {
+    if (i == 1) {
+      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+    }
+    branch(A, B, actual, N, constant);
+    if (i == 1) {
+      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+    }
+  }
 
   // compare
   puts(compare_1d(golden, actual, N) ? "pass" : "fail");

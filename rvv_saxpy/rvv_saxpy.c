@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#define N 31
+#define N 1024
 
 float input[N] = {-0.4325648115282207, -1.6655843782380970, 0.1253323064748307,
                   0.2876764203585489,  -1.1464713506814637, 1.1909154656429988,
@@ -91,11 +91,11 @@ int __attribute__((optimize("O0"))) main() {
 
   for (int i = 0; i < 2; i++) {
     if (i == 1) {
-      asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
     }
     saxpy_vec(N, 55.66, input, output);
     if (i == 1) {
-      asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
     }
   }
 

@@ -4,15 +4,13 @@
 #include <string.h>
 #include <math.h>
 
-#define N 32
-
 #define MAX_BLOCKSIZE 32
-#define MLEN 4
-#define KLEN 8
-#define NLEN 4
+#define MLEN 32
+#define KLEN 64
+#define NLEN 32
 #define OUTPUT_LEN 16
 
-float a_array[MAX_BLOCKSIZE] = {-0.4325648115282207, -1.6655843782380970,
+float a_array[MLEN*KLEN] = {-0.4325648115282207, -1.6655843782380970,
                                 0.1253323064748307,  0.2876764203585489,
                                 -1.1464713506814637, 1.1909154656429988,
                                 1.1891642016521031,  -0.0376332765933176,
@@ -29,7 +27,7 @@ float a_array[MAX_BLOCKSIZE] = {-0.4325648115282207, -1.6655843782380970,
                                 -1.4409644319010200, 0.5711476236581780,
                                 -0.3998855777153632, 0.1};
 
-float b_array[MAX_BLOCKSIZE] = {1.7491401329284098,  0.1325982188803279,
+float b_array[KLEN*NLEN] = {1.7491401329284098,  0.1325982188803279,
                                 0.3252281811989881,  -0.7938091410349637,
                                 0.3149236145048914,  -0.5272704888029532,
                                 0.9322666565031119,  1.1646643544607362,
@@ -46,8 +44,8 @@ float b_array[MAX_BLOCKSIZE] = {1.7491401329284098,  0.1325982188803279,
                                 -0.1869172943544062, 1.0131816724341454,
                                 0.2484350696132857,  0.1};
 
-float golden_array[OUTPUT_LEN];
-float c_array[OUTPUT_LEN];
+float golden_array[MLEN*NLEN];
+float c_array[MLEN*NLEN];
 
 void sgemm_golden() {
   for (size_t i = 0; i < MLEN; ++i)
@@ -72,17 +70,17 @@ void sgemm_vec(size_t size_m, size_t size_n, size_t size_k,
     const float *b_n_ptr = b;
     float *c_n_ptr = c;
     for (size_t c_n_count = size_n; c_n_count; c_n_count -= vl) {
-      vl = vsetvl_e32m1(c_n_count );
+      vl = vsetvl_e32m8(c_n_count );
       const float *a_k_ptr = a;
       const float *b_k_ptr = b_n_ptr;
-      vfloat32m1_t acc = vle32_v_f32m1(c_n_ptr, vl);
+      vfloat32m8_t acc = vle32_v_f32m8(c_n_ptr, vl);
       for (size_t k = 0; k < size_k; ++k) {
-        vfloat32m1_t b_n_data = vle32_v_f32m1(b_k_ptr, vl);
-        acc = vfmacc_vf_f32m1(acc, *a_k_ptr, b_n_data, vl);
+        vfloat32m8_t b_n_data = vle32_v_f32m8(b_k_ptr, vl);
+        acc = vfmacc_vf_f32m8(acc, *a_k_ptr, b_n_data, vl);
         b_k_ptr += ldb;
         a_k_ptr++;
       }
-      vse32_v_f32m1(c_n_ptr, acc, vl);
+      vse32_v_f32m8(c_n_ptr, acc, vl);
       c_n_ptr += vl;
       b_n_ptr += vl;
     }
@@ -119,9 +117,9 @@ int __attribute__((optimize("O0"))) main() {
 
   uint64_t start_cycle;
   uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
   sgemm_vec(MLEN, NLEN, KLEN, a_array, KLEN, b_array, NLEN, c_array, NLEN);
-  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
 
   return (pass == 0);
 }

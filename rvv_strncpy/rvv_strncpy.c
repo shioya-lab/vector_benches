@@ -63,9 +63,9 @@ int __attribute__((optimize("O0"))) main() {
 
   uint64_t start_cycle;
   uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
   strncpy_vec(actual, s1, count);
-  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
 
   // compare
   puts(compare_string(golden, actual, N) ? "pass" : "fail");

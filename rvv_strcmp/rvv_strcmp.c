@@ -42,9 +42,9 @@ int __attribute__((optimize("O0"))) main() {
 
   uint64_t start_cycle;
   uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
   actual = strcmp_vec(s0, s1);
-  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
 
   // compare
   puts(golden == actual ? "pass" : "fail");

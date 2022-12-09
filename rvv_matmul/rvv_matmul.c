@@ -62,11 +62,13 @@ int __attribute__((optimize("O0"))) main() {
   uint64_t stop_cycle;
   for (int i = 0; i < 2; i++) {
     if (i == 1) {
-      asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
     }
     matmul(A, B, actual, N, M, O);
     if (i == 1) {
-      asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+    } else {
+      asm volatile ("fence");
     }
   }
   // compare
