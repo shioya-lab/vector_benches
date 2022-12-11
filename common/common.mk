@@ -1,7 +1,7 @@
-GCC_ROOT = /home/kimura/riscv-rvvnext
+GCC_ROOT = /riscv/
 SNIPER_ROOT = ../../sniper
 SPIKE = $(SNIPER_ROOT)/../riscv-isa-sim/spike
-PK = /home/kimura/riscv64imafd/riscv64-unknown-elf/bin/pk
+PK = /riscv/riscv64-unknown-elf/bin/pk
 
 run-ooo: test.sift
 	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-mediumboom.cfg --traces=test.sift > cycle.ooo.log 2>&1
