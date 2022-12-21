@@ -16,14 +16,22 @@ DIR += rvv_strncpy
 
 SUBDIRSCLEAN = $(addsuffix clean,$(DIR))
 
+VLEN = 256
+
 .PHONY: $(DIR) $(SUBDIRSCLEAN)
 
 all: $(DIR)
+	$(MAKE) stats
 
 $(DIR):
-	$(MAKE) -C $@ run-ooo
-	$(MAKE) -C $@ run-io
-	$(MAKE) -C $@ run-vio
+	$(MAKE) -C $@ VLEN=$(VLEN) run-ooo
+	$(MAKE) -C $@ VLEN=$(VLEN) run-io
+	$(MAKE) -C $@ VLEN=$(VLEN) run-vio
+
+stats:
+	for dir in `ls -1 | grep rvv`; do \
+		echo -n $$dir " "; paste $${dir}/cycle.io $${dir}/cycle.vio $${dir}/cycle.ooo; \
+	done
 
 clean: $(SUBDIRSCLEAN)
 

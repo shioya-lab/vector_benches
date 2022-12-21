@@ -4,19 +4,19 @@ SPIKE = $(SNIPER_ROOT)/../riscv-isa-sim/spike
 PK = /riscv/riscv64-unknown-elf/bin/pk
 
 run-ooo: test.sift
-	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-mediumboom.cfg --traces=test.sift > cycle.ooo.log 2>&1
+	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-mediumboom.vlen$(VLEN).cfg --traces=test.sift > cycle.ooo.log 2>&1
 	awk '{ if($$1 == "CycleTrace") { if (cycle==0) { cycle=$$2 } else { print $$2 - cycle; cycle=0;} }}'  cycle.ooo.log > cycle.ooo
 	xz -f cycle.ooo.log
 	mv o3_trace.out o3_trace.outoforder.out
 
 run-io: test.sift # Inorder Implementation
-	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-inorderboom.cfg --traces=test.sift > cycle.io.log 2>&1
+	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-inorderboom.vlen$(VLEN).cfg --traces=test.sift > cycle.io.log 2>&1
 	awk '{ if($$1 == "CycleTrace") { if (cycle==0) { cycle=$$2 } else { print $$2 - cycle; cycle=0;} }}' cycle.io.log > cycle.io
 	xz -f cycle.io.log
 	mv o3_trace.out o3_trace.inorder.out
 
 run-vio: test.sift # Vector Inorder Implementation
-	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-vinorderboom.cfg --traces=test.sift > cycle.vio.log 2>&1
+	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-vinorderboom.vlen$(VLEN).cfg --traces=test.sift > cycle.vio.log 2>&1
 	awk '{ if($$1 == "CycleTrace") { if (cycle==0) { cycle=$$2 } else { print $$2 - cycle; cycle=0;} }}' cycle.vio.log > cycle.vio
 	xz -f cycle.vio.log
 	mv o3_trace.out o3_trace.vinorder.out
@@ -29,7 +29,7 @@ debug_cui: test.sift
 
 
 test.sift : test.elf
-	$(SPIKE) -l --isa=rv64gcv --log-commits --sift $@ $(PK) test.elf > test.spike.log 2>&1
+	$(SPIKE) -l --isa=rv64gcv --varch=vlen:$(VLEN),elen:64 --log-commits --sift $@ $(PK) test.elf > test.spike.log 2>&1
 	$(SNIPER_ROOT)/sift/siftdump $@ > $@.dmp 2>&1
 
 test.elf: $(SOURCE_FILES)

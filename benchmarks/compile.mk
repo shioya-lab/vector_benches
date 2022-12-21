@@ -47,6 +47,7 @@ RISCV_GCC_VEC_OPTS ?= \
 	-DUSE_RISCV_VECTOR \
 	-ffast-math -fno-common -fno-builtin-printf
 
+
 RISCV_GCC_SCALAR_OPTS ?= \
 	-O2 \
 	--target=riscv64-unknown-elf -march=rv64gc \
@@ -57,7 +58,7 @@ RISCV_GCC_SCALAR_OPTS ?= \
 
 RISCV_LINK ?= $(RISCV_GCC) -T ../common/test.ld $(incs)
 RISCV_LINK_OPTS ?= -static -nostdlib -nostartfiles -lm -lgcc -T ../common/test.ld
-RISCV_OBJDUMP ?= $(RISCV_PREFIX)objdump --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.text.init --section=.data
+RISCV_OBJDUMP ?= $(RISCV_PREFIX)objdump -D
 RISCV_SIM ?= spike --isa=rv$(XLEN)gc
 
 incs  += -I../env -I../common $(addprefix -I$(src_dir)/, $(bmarks))

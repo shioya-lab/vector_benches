@@ -408,11 +408,11 @@ void* memset(void* dest, int byte, size_t n)
 
 size_t strlen(const char *src) {
   size_t vlmax = vsetvlmax_e8m8();
-  char *copy_src = src;
+  char *copy_src = (char *)src;
   long first_set_bit = -1;
   size_t vl;
   while (first_set_bit < 0) {
-    vint8m8_t vec_src = vle8ff_v_i8m8(copy_src, &vl, vlmax);
+    vint8m8_t vec_src = vle8ff_v_i8m8((const signed char *)copy_src, &vl, vlmax);
     vbool1_t string_terminate = vmseq_vx_i8m8_b1(vec_src, 0, vl);
 
     copy_src += vl;
@@ -440,8 +440,8 @@ int strcmp(const char* src1, const char* src2)
   long first_set_bit = -1;
   size_t vl, vl1;
   while (first_set_bit < 0) {
-    vint8m2_t vec_src1 = vle8ff_v_i8m2(src1, &vl, vlmax);
-    vint8m2_t vec_src2 = vle8ff_v_i8m2(src2, &vl1, vlmax);
+    vint8m2_t vec_src1 = vle8ff_v_i8m2((const signed char *)src1, &vl, vlmax);
+    vint8m2_t vec_src2 = vle8ff_v_i8m2((const signed char *)src2, &vl1, vlmax);
 
     vbool4_t string_terminate = vmseq_vx_i8m2_b4(vec_src1, 0, vl);
     vbool4_t no_equal = vmsne_vv_i8m2_b4(vec_src1, vec_src2, vl);
@@ -464,12 +464,12 @@ char* strcpy(char* dest, const char* src)
   long first_set_bit = -1;
   size_t vl;
   while (first_set_bit < 0) {
-    vint8m8_t vec_src = vle8ff_v_i8m8(src, &vl, vlmax);
+    vint8m8_t vec_src = vle8ff_v_i8m8((const signed char *)src, &vl, vlmax);
 
     vbool1_t string_terminate = vmseq_vx_i8m8_b1(vec_src, 0, vl);
     vbool1_t mask = vmsif_m_b1(string_terminate, vl);
 
-    vse8_v_i8m8_m(mask, dest, vec_src, vl);
+    vse8_v_i8m8_m(mask, (signed char *)dest, vec_src, vl);
 
     src += vl;
     dest += vl;
