@@ -22,11 +22,13 @@ run-vio: test.sift # Vector Inorder Implementation
 	mv o3_trace.out o3_trace.vinorder.out
 
 debug: test.sift
-	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-mediumboom.cfg --traces=test.sift --gdb
+	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-mediumboom.vlen$(VLEN).cfg --traces=test.sift --gdb
 
 debug_cui: test.sift
-	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-mediumboom.cfg --traces=test.sift --gdb --gdb-wait
+	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-mediumboom.vlen$(VLEN).cfg --traces=test.sift --gdb --gdb-wait
 
+debug_valgrind: test.sift
+	valgrind --leak-check=full $(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-mediumboom.vlen$(VLEN).cfg --traces=test.sift
 
 test.sift : test.elf
 	$(SPIKE) -l --isa=rv64gcv --varch=vlen:$(VLEN),elen:64 --log-commits --sift $@ $(PK) test.elf > test.spike.log 2>&1
