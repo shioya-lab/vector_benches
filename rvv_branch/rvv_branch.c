@@ -1,4 +1,5 @@
 #include "common.h"
+#include "count_cycles.h"
 #include <riscv_vector.h>
 
 // branch and assign
@@ -47,15 +48,15 @@ int __attribute__((optimize("O0"))) main() {
   branch_golden(A, B, golden, N, constant);
   branch(A, B, actual, N, constant);
 
-  uint64_t start_cycle;
-  uint64_t stop_cycle;
+  long long start_cycle;
+  long long stop_cycle;
   for (int i = 0; i < 2; i++) {
     if (i == 1) {
-      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+      start_cycle = get_cycle();
     }
     branch(A, B, actual, N, constant);
     if (i == 1) {
-      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+      stop_cycle = get_cycle();
     }
   }
 

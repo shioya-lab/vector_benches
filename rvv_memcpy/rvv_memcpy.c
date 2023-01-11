@@ -1,4 +1,5 @@
 #include "common.h"
+#include "count_cycles.h"
 #include <riscv_vector.h>
 #include <string.h>
 
@@ -31,7 +32,9 @@ int __attribute__((optimize("O0"))) main() {
   uint64_t start_cycle;
   uint64_t stop_cycle;
   asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+  start_konatadump();
   memcpy_vec(actual, A, sizeof(A));
+  stop_konatadump();
   asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
 
   // compare

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "count_cycles.h"
 #include <riscv_vector.h>
 #include <string.h>
 
@@ -61,11 +62,9 @@ int __attribute__((optimize("O0"))) main() {
 
   strncpy_vec(actual, s1, count);
 
-  uint64_t start_cycle;
-  uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+  uint64_t start_cycle = get_cycle();
   strncpy_vec(actual, s1, count);
-  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+  uint64_t stop_cycle = get_cycle();
 
   // compare
   puts(compare_string(golden, actual, N) ? "pass" : "fail");
