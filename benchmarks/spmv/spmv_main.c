@@ -110,7 +110,11 @@ int __attribute__((optimize("O0"))) main()
 
   long long start_cycle = get_cycle();
   long long start_vecinst = get_vecinst();
+
+  start_konatadump();
   spmv(R, val, idx, x, ptr, y);
+  stop_konatadump();
+
   long long end_cycle = get_cycle();
   long long end_vecinst = get_vecinst();
   printf("cycles = %lld\n", end_cycle - start_cycle);
