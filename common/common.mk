@@ -8,6 +8,7 @@ run-ooo: test.sift
 	awk '{ if($$1 == "CycleTrace") { if (cycle==0) { cycle=$$2 } else { print $$2 - cycle; cycle=0;} }}'  cycle.ooo.log > cycle.ooo
 	xz -f cycle.ooo.log
 	mv o3_trace.out o3_trace.outoforder.out
+	$(MAKE) sniper2mcpat DIR=.
 
 run-io: test.sift # Inorder Implementation
 	$(SNIPER_ROOT)/run-sniper --power -v -c $(SNIPER_ROOT)/config/riscv-inorderboom.vlen$(VLEN).cfg --traces=test.sift > cycle.io.log 2>&1
@@ -37,6 +38,9 @@ test.sift : test.elf
 test.elf: $(SOURCE_FILES)
 	$(GCC_ROOT)/bin/riscv64-unknown-elf-gcc-12.0.1 -march=rv64gv -O3 $^ -o $@  -I../../sniper/include -I../common/
 	$(GCC_ROOT)/bin/riscv64-unknown-elf-objdump -D $@ > $@.dmp
+
+sniper2mcpat:
+	python3 ../../sniper2mcpat/sniper2mcpat.py $(DIR)/sim.stats.sqlite3 ../mcpat_common/mcpat.template.vec$(VLEN).xml
 
 clean:
 	$(RM) -rf test.elf.dmp test.elf *.log *.log.tgz *.out *.info *.sift* *.sqlite3 *.cfg *.dmp

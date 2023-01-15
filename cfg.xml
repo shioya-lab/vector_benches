@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding='utf-8'?>
+<!--
+  Queue ="shioya"
+  SessionFilter="1:1"
+  OnikiriResultDirectory = "../../../AutoRunTools/result"
+  ResultDirectory = "work/result-mcpat"
+  TemplateFile = "work/wide.template.xml"
+  IntermediateFile = "mcpat.xml"
+  -->
+<!--
+    McPAT_Binary = "/home/kimura/work/sniper/sniper/sniper2mcpat/mcpat-mod/mcpat"
+-->
+<Configuration
+  McPAT_Binary = "/home/kimura/work/sniper/mcpat/build/mcpat"
+  CommandlineOption = "--print_level 5 --opt_for_clk 0"
+>
+  <Macros>
+    <!-- <macro name="ISSUE_WIDTH" value="4"/> -->
+  </Macros>
+</Configuration>
