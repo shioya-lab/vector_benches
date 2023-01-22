@@ -12,8 +12,9 @@ sim.cfg
 *.sqlite3*
 sim.info
 *.xz
-vio.v
-ooo.v
-ino.v
+*.vector
+vio.v.*
+ooo.v.*
+ino.v.*
 ooo.s
 ino.s

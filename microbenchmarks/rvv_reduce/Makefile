@@ -4,6 +4,6 @@ SOURCE_FILES += rvv_reduce.c
 
 APP_NAME = rvv_reduce
 
-include ../compile.mk
-include ../runspike.mk
-
+include ../microbenches.mk
+include ../../scripts/compile.mk
+include ../../scripts/runspike.mk

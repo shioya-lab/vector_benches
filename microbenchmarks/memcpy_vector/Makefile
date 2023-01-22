@@ -4,5 +4,6 @@ SOURCE_FILES += memcpy.S
 
 APP_NAME = memcpy_vector
 
-include ../compile.mk
-include ../runspike.mk
+include ../microbenches.mk
+include ../../scripts/compile.mk
+include ../../scripts/runspike.mk
