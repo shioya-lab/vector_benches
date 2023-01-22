@@ -13,6 +13,7 @@ DIR += rvv_strcmp
 DIR += rvv_strcpy
 DIR += rvv_strlen
 DIR += rvv_strncpy
+DIR += spmv
 
 SUBDIRSCLEAN = $(addsuffix clean,$(DIR))
 
@@ -24,9 +25,11 @@ all: $(DIR)
 	$(MAKE) stats
 
 $(DIR):
-	$(MAKE) -C $@ VLEN=$(VLEN) run-ooo
-	$(MAKE) -C $@ VLEN=$(VLEN) run-io
-	$(MAKE) -C $@ VLEN=$(VLEN) run-vio
+	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-ooo-v
+	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-ino-v
+	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-vio-v
+	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-ooo-s
+	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-ino-s
 
 stats:
 	for dir in `ls -1 | grep rvv`; do \

@@ -115,7 +115,7 @@ void _init(int cid, int nc)
   char* pbuf = buf;
   for (int i = 0; i < NUM_COUNTERS; i++)
     if (counters[i])
-      pbuf += sprintf(pbuf, "%s = %d\n", counter_names[i], counters[i]);
+      pbuf += sprintf(pbuf, "%s = %lu\n", counter_names[i], counters[i]);
   if (pbuf != buf)
     printstr(buf);
 
@@ -356,18 +356,19 @@ int printf(const char* fmt, ...)
   return 0; // incorrect return value, but who cares, anyway?
 }
 
+void sprintf_putch(int ch, void** data)
+{
+  char** pstr = (char**)data;
+  **pstr = ch;
+  (*pstr)++;
+}
+
+
 int sprintf(char* str, const char* fmt, ...)
 {
   va_list ap;
   char* str0 = str;
   va_start(ap, fmt);
-
-  void sprintf_putch(int ch, void** data)
-  {
-    char** pstr = (char**)data;
-    **pstr = ch;
-    (*pstr)++;
-  }
 
   vprintfmt(sprintf_putch, (void**)&str, fmt, ap);
   *str = 0;
@@ -392,8 +393,6 @@ void* memcpy(void* dest, const void* src, size_t len)
   return dest;
 }
 
-void* memset_char(void* dest, int byte, size_t len);
-
 void* memset(void* dest, int byte, size_t len)
 {
   if ((((uintptr_t)dest | len) & (sizeof(uintptr_t)-1)) == 0) {
@@ -402,11 +401,9 @@ void* memset(void* dest, int byte, size_t len)
     word |= word << 16;
     word |= word << 16 << 16;
 
-    {
-      uintptr_t *d = dest;
-      while (d < (uintptr_t*)(dest + len))
-        *d++ = word;
-    }
+    uintptr_t *d = dest;
+    while (d < (uintptr_t*)(dest + len))
+      *d++ = word;
   } else {
     char *d = dest;
     while (d < (char*)(dest + len))

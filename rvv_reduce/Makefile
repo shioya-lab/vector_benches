@@ -2,4 +2,8 @@
 
 SOURCE_FILES += rvv_reduce.c
 
-include common.mk
+APP_NAME = rvv_reduce
+
+include ../compile.mk
+include ../runspike.mk
+

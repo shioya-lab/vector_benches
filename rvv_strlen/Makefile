@@ -2,4 +2,8 @@
 
 SOURCE_FILES += rvv_strlen.c
 
-include common.mk
+APP_NAME = rvv_strlen
+
+include ../compile.mk
+include ../runspike.mk
+

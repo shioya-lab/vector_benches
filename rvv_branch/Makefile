@@ -2,4 +2,8 @@
 
 SOURCE_FILES = rvv_branch.c
 
-include common.mk
+APP_NAME = rvv_branch
+
+include ../compile.mk
+include ../runspike.mk
+

@@ -2,4 +2,9 @@
 
 SOURCE_FILES = rvv_saxpy.c
 
-include common.mk
+APP_NAME = rvv_saxpy
+
+include ../compile.mk
+include ../runspike.mk
+
+

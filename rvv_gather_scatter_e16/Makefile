@@ -1,7 +1,9 @@
-rvv_target = spmv_vector
-serial_target = spmv_scalar
+RISCV_GCC = riscv64-unknown-elf-gcc
 
-APP_NAME = spmv
+SOURCE_FILES += rvv_gather_scatter_e16.c
+
+APP_NAME = rvv_gather_scatter_e16
+PK =  # this test case doesn't use PK
 
 RISCV_GCC = riscv$(XLEN)-unknown-elf-gcc
 RISCV_GCC_VEC_OPTS ?= \
@@ -17,13 +19,6 @@ RISCV_GCC_SCALAR_OPTS ?= \
 	-O1 \
 	-DPREALLOCATE=1 -mcmodel=medany \
 	-fno-common -fno-builtin-printf
-
-#	-ffast-math
-#	-O2 \
-
-APP_NAME = spmv
-
-PK =
 
 include ../compile.mk
 include ../runspike.mk

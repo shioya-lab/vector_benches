@@ -31,6 +31,9 @@ bmarks = \
 	mt-vvadd \
 	mt-matmul \
 
+rvv_target    ?= $(APP_NAME).vector
+serial_target ?= $(APP_NAME).scalar
+
 #--------------------------------------------------------------------
 # Build rules
 #--------------------------------------------------------------------

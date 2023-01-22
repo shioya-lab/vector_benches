@@ -2,4 +2,8 @@
 
 SOURCE_FILES += rvv_index.c
 
-include common.mk
+APP_NAME = rvv_index
+
+include ../compile.mk
+include ../runspike.mk
+

@@ -2,4 +2,8 @@
 
 SOURCE_FILES += rvv_strcpy.c
 
-include common.mk
+APP_NAME = rvv_strcpy
+
+include ../compile.mk
+include ../runspike.mk
+

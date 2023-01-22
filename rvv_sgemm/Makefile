@@ -2,4 +2,8 @@
 
 SOURCE_FILES += rvv_sgemm.c
 
-include common.mk
+APP_NAME = rvv_sgemm
+
+include ../compile.mk
+include ../runspike.mk
+

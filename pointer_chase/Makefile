@@ -2,4 +2,8 @@
 
 SOURCE_FILES += main.c
 
-include common.mk
+APP_NAME = pointer_chase
+
+include ../compile.mk
+include ../runspike.mk
+
