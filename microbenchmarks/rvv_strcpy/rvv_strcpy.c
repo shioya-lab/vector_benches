@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <riscv_vector.h>
 #include <string.h>
+#include "sim_api.h"
+#include "count_utils.h"
 
 // reference https://github.com/riscv/riscv-v-spec/blob/master/example/strcpy.s
 char *strcpy_vec(char *dst, const char *src) {
@@ -40,11 +42,11 @@ int __attribute__((optimize("O0"))) main() {
 
   strcpy_vec(actual, s0);
 
-  uint64_t start_cycle;
-  uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+  SimRoiStart();
+  start_konatadump();
   strcpy_vec(actual, s0);
-  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+  SimRoiEnd();
+  stop_konatadump();
 
   // compare
   puts(strcmp(golden, actual) == 0 ? "pass" : "fail");

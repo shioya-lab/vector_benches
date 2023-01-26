@@ -1,6 +1,8 @@
 #include "common.h"
 #include <riscv_vector.h>
 #include <string.h>
+#include "sim_api.h"
+#include "count_utils.h"
 
 // reference https://github.com/riscv/riscv-v-spec/blob/master/example/strlen.s
 size_t strlen_vec(char *src) {
@@ -36,11 +38,11 @@ int __attribute__((optimize("O0"))) main() {
   golden = strlen(s0);
   actual = strlen_vec(s0);
 
-  uint64_t start_cycle;
-  uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+  SimRoiStart();
+  start_konatadump();
   actual = strlen_vec(s0);
-  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+  SimRoiEnd();
+  stop_konatadump();
 
   // compare
   puts(golden == actual ? "pass" : "fail");

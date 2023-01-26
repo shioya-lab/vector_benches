@@ -1,7 +1,8 @@
 #include "common.h"
-#include "count_cycles.h"
 #include <riscv_vector.h>
 #include <string.h>
+#include "sim_api.h"
+#include "count_utils.h"
 
 // reference https://github.com/riscv/riscv-v-spec/blob/master/example/strncpy.s
 char *strncpy_vec(char *dst, char *src, size_t count) {
@@ -62,9 +63,11 @@ int __attribute__((optimize("O0"))) main() {
 
   strncpy_vec(actual, s1, count);
 
-  uint64_t start_cycle = get_cycle();
+  SimRoiStart();
+  start_konatadump();
   strncpy_vec(actual, s1, count);
-  uint64_t stop_cycle = get_cycle();
+  SimRoiEnd();
+  stop_konatadump();
 
   // compare
   puts(compare_string(golden, actual, N) ? "pass" : "fail");

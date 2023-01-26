@@ -6,6 +6,7 @@ run:
 SOURCE_FILES += main.c
 
 APP_NAME = memcpy_scalar
+serial_target = DUMMY
 
 include ../microbenches.mk
 include ../../scripts/compile.mk

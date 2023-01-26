@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "sim_api.h"
+#include "count_utils.h"
+
 
 void copy_data_vec(int8_t *dest_data, int8_t *source_data, int data_num);
 void copy_data_mask_vec(int8_t *dest_data, int8_t *source_data, int8_t *mask, int data_num);
@@ -66,10 +69,17 @@ int test_0()
 {
 
   format_array();
+
+  SimRoiStart();
+  start_konatadump();
+
   uint64_t rd = source_data[0];
   for (int i = 0; i < DATA_NUM-1; i++) {
     asm volatile ("ld %0, 0(%1)": "=r"(rd) : "r"(rd));
   }
+
+  SimRoiEnd();
+  stop_konatadump();
 
   return 0;
 }

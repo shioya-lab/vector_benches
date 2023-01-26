@@ -2,7 +2,8 @@
 #include <stdint.h>
 #include <string.h>
 #include "common.h"
-
+#include "sim_api.h"
+#include "count_utils.h"
 
 #include "data.h"
 
@@ -52,7 +53,11 @@ int test_mask();
 
 int main()
 {
+  SimRoiStart();
+  start_konatadump();
   test_0();
+  SimRoiEnd();
+  stop_konatadump();
   // if (test_0() != 0) {
   //   return 10;
   // }

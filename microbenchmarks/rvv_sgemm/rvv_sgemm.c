@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "sim_api.h"
+#include "count_utils.h"
 
 #define MAX_BLOCKSIZE 32
 #define MLEN 32
@@ -115,11 +117,11 @@ int __attribute__((optimize("O0"))) main() {
   if (pass)
     printf("passed\n");
 
-  uint64_t start_cycle;
-  uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+  SimRoiStart();
+  start_konatadump();
   sgemm_vec(MLEN, NLEN, KLEN, a_array, KLEN, b_array, NLEN, c_array, NLEN);
-  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+  SimRoiEnd();
+  stop_konatadump();
 
   return (pass == 0);
 }

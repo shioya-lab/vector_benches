@@ -1,5 +1,7 @@
 #include "common.h"
 #include <riscv_vector.h>
+#include "sim_api.h"
+#include "count_utils.h"
 
 // matrix multiplication
 // A[n][o], B[m][o] --> C[n][m];
@@ -62,11 +64,13 @@ int __attribute__((optimize("O0"))) main() {
   uint64_t stop_cycle;
   for (int i = 0; i < 2; i++) {
     if (i == 1) {
-      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+      SimRoiStart();
+      start_konatadump();
     }
     matmul(A, B, actual, N, M, O);
     if (i == 1) {
-      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+      SimRoiEnd();
+      stop_konatadump();
     } else {
       asm volatile ("fence");
     }

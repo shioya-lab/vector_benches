@@ -1,5 +1,7 @@
 #include "common.h"
 #include <riscv_vector.h>
+#include "sim_api.h"
+#include "count_utils.h"
 
 // accumulate and reduce
 void reduce_golden(double *a, double *b, double *result_sum,
@@ -61,11 +63,11 @@ int __attribute__((optimize("O0"))) main() {
 
   reduce(A, B, &actual_sum, &actual_count, N);
 
-  uint64_t start_cycle;
-  uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+  SimRoiStart();
+  start_konatadump();
   reduce(A, B, &actual_sum, &actual_count, N);
-  asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+  SimRoiEnd();
+  stop_konatadump();
 
   // compare
   puts(golden_sum - actual_sum < 1e-6 && golden_count == actual_count ? "pass"

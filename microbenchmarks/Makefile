@@ -1,6 +1,6 @@
 DIR += memcpy_scalar
 DIR += memcpy_vector
-DIR += pointer_chase
+# DIR += pointer_chase
 # DIR += printf
 DIR += rvv_branch
 DIR += rvv_index
@@ -13,7 +13,6 @@ DIR += rvv_strcmp
 DIR += rvv_strcpy
 DIR += rvv_strlen
 DIR += rvv_strncpy
-DIR += spmv
 
 SUBDIRSCLEAN = $(addsuffix clean,$(DIR))
 
@@ -28,12 +27,12 @@ $(DIR):
 	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-ooo-v
 	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-ino-v
 	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-vio-v
-	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-ooo-s
-	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-ino-s
+# 	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-ooo-s
+# 	$(MAKE) -C $@ VLEN=$(VLEN) runsniper-ino-s
 
 stats:
-	for dir in `ls -1 | grep rvv`; do \
-		echo -n $$dir " "; paste $${dir}/cycle.io $${dir}/cycle.vio $${dir}/cycle.ooo; \
+	for dir in $(DIR); do \
+		echo -n $$dir " "; paste $${dir}/ino.v.$(VLEN)/cycle $${dir}/vio.v.$(VLEN)/cycle $${dir}/ooo.v.$(VLEN)/cycle; \
 	done
 
 clean: $(SUBDIRSCLEAN)

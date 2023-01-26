@@ -28,11 +28,12 @@ int main() {
 
   // compute
   memcpy(golden, A, sizeof(A));
-  uint64_t start_cycle;
-  uint64_t stop_cycle;
-  asm volatile ("csrr %0, cycle":"=r"(start_cycle));
+
+  SimRoiStart();
+  start_konatadump();
   memcpy_vec(actual, A, sizeof(A));
-  asm volatile ("csrr %0, cycle":"=r"(stop_cycle));
+  SimRoiEnd();
+  stop_konatadump();
 
   // compare
   puts(compare_1d(golden, actual, N) ? "pass" : "fail");

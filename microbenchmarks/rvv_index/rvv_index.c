@@ -1,5 +1,7 @@
 #include "common.h"
 #include <riscv_vector.h>
+#include "sim_api.h"
+#include "count_utils.h"
 
 // index arithmetic
 void index_golden(double *a, double *b, double *c, int n) {
@@ -27,7 +29,8 @@ void index_(double *a, double *b, double *c, int n) {
   }
 }
 
-int __attribute__((optimize("O0"))) main() {
+int __attribute__((optimize("O0")))
+main() {
   const int N = 31;
   const uint32_t seed = 0xdeadbeef;
   srand(seed);
@@ -45,11 +48,13 @@ int __attribute__((optimize("O0"))) main() {
   uint64_t stop_cycle;
   for (int i = 0; i < 2; i++) {
     if (i == 1) {
-      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+      SimRoiStart();
+      start_konatadump();
     }
     index_(actual, B, C, N);
     if (i == 1) {
-      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+      SimRoiEnd();
+      stop_konatadump();
     } else {
       asm volatile ("fence");
     }

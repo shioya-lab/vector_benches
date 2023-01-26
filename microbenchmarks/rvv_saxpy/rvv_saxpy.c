@@ -2,6 +2,8 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <math.h>
+#include "sim_api.h"
+#include "count_utils.h"
 
 #define N 1024
 
@@ -91,11 +93,13 @@ int __attribute__((optimize("O0"))) main() {
 
   for (int i = 0; i < 2; i++) {
     if (i == 1) {
-      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(start_cycle));
+      SimRoiStart();
+      start_konatadump();
     }
     saxpy_vec(N, 55.66, input, output);
     if (i == 1) {
-      asm volatile ("csrr %0, cycle; add x0, x0, x0":"=r"(stop_cycle));
+      SimRoiEnd();
+      stop_konatadump();
     }
   }
 

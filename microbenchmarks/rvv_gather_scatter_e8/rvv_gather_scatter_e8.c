@@ -41,13 +41,11 @@ int __attribute__((optimize("O0"))) main() {
   uint64_t result = gather8 (v_data8, v_index8, 128);
   printf("1st try: result = %ld\n", result);
 
-  long long start_cycle = get_cycle();
-  long long start_vecinst = get_vecinst();
+  SimRoiStart();
   start_konatadump();
   result = gather8 (v_data8, v_index8, 128);
+  SimRoiEnd();
   stop_konatadump();
-  long long end_cycle = get_cycle();
-  long long end_vecinst = get_vecinst();
 
   printf("result = %ld, cycle = %ld, vecinst = %ld\n", result, end_cycle - start_cycle, end_vecinst - start_vecinst);
 

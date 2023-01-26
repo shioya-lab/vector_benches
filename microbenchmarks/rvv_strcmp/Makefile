@@ -1,8 +1,12 @@
 .PHONY : run
 
+run:
+	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-ino-v
+
 SOURCE_FILES += rvv_strcmp.c
 
 APP_NAME = rvv_strcmp
+serial_target = DUMMY
 
 include ../microbenches.mk
 include ../../scripts/compile.mk

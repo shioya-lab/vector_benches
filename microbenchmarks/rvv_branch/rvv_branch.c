@@ -1,6 +1,7 @@
 #include "common.h"
-#include "count_cycles.h"
 #include <riscv_vector.h>
+#include "sim_api.h"
+#include "count_utils.h"
 
 // branch and assign
 void branch_golden(double *a, double *b, double *c, int n, double constant) {
@@ -48,17 +49,13 @@ int __attribute__((optimize("O0"))) main() {
   branch_golden(A, B, golden, N, constant);
   branch(A, B, actual, N, constant);
 
-  long long start_cycle;
-  long long stop_cycle;
+  SimRoiStart();
+  start_konatadump();
   for (int i = 0; i < 2; i++) {
-    if (i == 1) {
-      start_cycle = get_cycle();
-    }
     branch(A, B, actual, N, constant);
-    if (i == 1) {
-      stop_cycle = get_cycle();
-    }
   }
+  SimRoiEnd();
+  stop_konatadump();
 
   // compare
   puts(compare_1d(golden, actual, N) ? "pass" : "fail");
