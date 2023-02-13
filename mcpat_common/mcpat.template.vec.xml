@@ -9,17 +9,17 @@
   <macro name="COMMIT_WIDTH" value="4"/>
 
   <macro name="ISSUE_WIDTH" value="4"/>
-  <macro name="FP_ISSUE_WIDTH" value="2"/>
+  <macro name="FP_ISSUE_WIDTH" value="1"/>
   <macro name="INT_ISSUE_WIDTH" value="2"/>
-  <macro name="MEM_ISSUE_WIDTH" value="2"/>
+  <!-- macro name="MEM_ISSUE_WIDTH" value="$(MEM_ISSUE_WIDTH)"/ -->
 
   <macro name="INT_PRF_SIZE" value="128"/>
   <macro name="FP_PRF_SIZE" value="128"/>
 
   <macro name="ISSUE_QUEUE_SIZE" value="36"/>
   <macro name="ROB_SIZE" value="128"/>
-  <macro name="LQ_SIZE" value="48"/>
-  <macro name="SQ_SIZE" value="32"/>
+  <!-- macro name="LQ_SIZE" value="$(LQ_SIZE)"/ -->
+  <!-- macro name="SQ_SIZE" value="$(SQ_SIZE)"/ -->
 
   <macro name="L1I_SIZE" value="32"/>  <!-- KB -->
   <macro name="L1I_WAY" value="4"/>   <!-- KB -->
@@ -36,8 +36,6 @@
       * mul_accesses が 0 になってる
       * function_calls は BR の 0.25
   -->
-
-  <macro name="SC0" value="/stats/core-0"/>
 
   <!-- TODO: scale はクロック周波数に合わせて計算する必要がある -->
   <macro name="CLOCK_SCALE"
@@ -62,31 +60,43 @@
   </macro>
   <macro name="NUM_BPRED_MISS" value="path:$(SC0)/branch_predictor/num-incorrect/@roi-length"/>
 
-  <macro name="NUM_LOADS" value="path:$(SC0)/L1-D/loads/@roi-length"/>
-  <macro name="NUM_STORES" value="path:$(SC0)/L1-D/stores/@roi-length"/>
-  <macro name="NUM_LOAD_MISSES" value="path:$(SC0)/L1-D/load-misses/@roi-length"/>
-  <macro name="NUM_STORE_MISSES" value="path:$(SC0)/L1-D/store-misses/@roi-length"/>
+  <!-- macro name="NUM_LOADS" value="path:$(SC0)/L1-D/loads/@roi-length"/ -->
+  <!-- macro name="NUM_STORES" value="path:$(SC0)/L1-D/stores/@roi-length"/ -->
+  <!-- macro name="NUM_LOAD_MISSES" value="path:$(SC0)/L1-D/load-misses/@roi-length"/ -->
+  <!-- macro name="NUM_STORE_MISSES" value="path:$(SC0)/L1-D/store-misses/@roi-length"/ -->
 
   <macro name="NUM_L2_READS" value="path:$(SC0)/L2/loads/@roi-length"/>
   <macro name="NUM_L2_WRITES" value="path:$(SC0)/L2/stores/@roi-length"/>
   <macro name="NUM_L2_READ_MISSES" value="path:$(SC0)/L2/load-misses/@roi-length"/>
   <macro name="NUM_L2_WRITE_MISSES" value="path:$(SC0)/L2/store-misses/@roi-length"/>
 
+  <!-- macro name="NUM_L3_READS" value="path:$(SC0)/L3/loads/@roi-length"/ -->
+  <!-- macro name="NUM_L3_WRITES" value="path:$(SC0)/L3/stores/@roi-length"/ -->
+  <!-- macro name="NUM_L3_READ_MISSES" value="path:$(SC0)/L3/load-misses/@roi-length"/ -->
+  <!-- macro name="NUM_L3_WRITE_MISSES" value="path:$(SC0)/L3/store-misses/@roi-length"/ -->
+
+  <macro name="NUM_L3_READS" value="0"/>
+  <macro name="NUM_L3_WRITES" value="0"/>
+  <macro name="NUM_L3_READ_MISSES" value="0"/>
+  <macro name="NUM_L3_WRITE_MISSES" value="0"/>
+
+  <!-- macro name="NUM_MEM_READS" value="path:$(SC0)/dram/reads/@roi-length"/ -->
+  <!-- macro name="NUM_MEM_WRITES" value="path:$(SC0)/dram/writes/@roi-length"/ -->
+
+  <macro name="NUM_MEM_READS"  value="0"/>
+  <macro name="NUM_MEM_WRITES" value="0"/>
+
   <macro name="NUM_INT_OPS" value="op:add">
-    <source value="path:$(SC0)/rob_timer/uop_load/@roi-length"/>
-    <source value="path:$(SC0)/rob_timer/uop_store/@roi-length"/>
-    <source value="path:$(SC0)/rob_timer/uop_generic/@roi-length"/>
+    <source value="$(UOP_LOAD)"/>
+    <source value="$(UOP_STORE)"/>
+    <source value="$(UOP_GENERIC)"/>
   </macro>
-  <macro name="NUM_FP_OPS" value="op:add">
-    <source value="path:$(SC0)/rob_timer/uop_fp_addsub/@roi-length"/>
-    <source value="path:$(SC0)/rob_timer/uop_fp_muldiv/@roi-length"/>
-  </macro>
-  <macro name="NUM_BR_OPS"
+  <!-- macro name="NUM_BR_OPS"
     value="path:$(SC0)/rob_timer/uop_branch/@roi-length"
-  />
-  <macro name="NUM_VEC_OPS" value="op:add">
-    <source value="path:$(SC0)/rob_timer/uop_vec_arith/@roi-length"/>
-    <source value="path:$(SC0)/rob_timer/uop_vec_memacc/@roi-length"/>
+    / -->
+  <macro name="NUM_FP_OPS" value="op:add">
+    <source value="$(UOP_FP_ADDSUB)"/>
+    <source value="$(UOP_FP_MULDIV)"/>
   </macro>
   <!-- OoO に関わる部分 -->
   <macro name="NUM_ROB_READS" value="op:add">
@@ -96,10 +106,16 @@
     <source value="$(NUM_COMMITTED_INSNS)"/>
   </macro>
   <macro name="NUM_RENAME_READS" value="op:add">
-    <source value="$(NUM_FETCHED_INSNS)" scale="2"/>
+    <source value="$(NUM_INT_OPS)" scale="2"/>
   </macro>
   <macro name="NUM_RENAME_WRITES" value="op:add">
-    <source value="$(NUM_FETCHED_INSNS)"/>
+    <source value="$(NUM_INT_OPS)"/>
+  </macro>
+  <macro name="NUM_FP_RENAME_READS" value="op:add">
+    <source value="$(NUM_FP_OPS)" scale="2"/>
+  </macro>
+  <macro name="NUM_FP_RENAME_WRITES" value="op:add">
+    <source value="$(NUM_FP_OPS)"/>
   </macro>
   <macro name="NUM_LSQ_LOAD_ACCESSES" value="op:add">
     <source value="$(NUM_LOADS)"/>
@@ -159,7 +175,7 @@
       <param name="opcode_width" value="7"/>
       <param name="x86" value="0"/>
       <param name="micro_opcode_width" value="8"/>
-      <param name="machine_type" value="0"/>
+      <param name="machine_type" value="$(INORDER)"/>
       <!-- inorder/OoO; 1 inorder; 0 OOO-->
       <param name="number_hardware_threads" value="1"/>
       <!-- number_instruction_fetch_ports(icache ports) is always 1 in single-thread processor,
@@ -205,7 +221,7 @@
       <param name="ROB_size" value="$(ROB_SIZE)"/>
       <!-- each in-flight instruction has an entry in ROB -->
       <!-- registers -->
-      <param name="archi_Regs_IRF_size" value="16"/><!-- X86-64 has 16GPR -->
+      <param name="archi_Regs_IRF_size" value="32"/><!-- X86-64 has 16GPR -->
       <param name="archi_Regs_FRF_size" value="32"/><!-- MMX + XMM -->
       <!--  if OoO processor, phy_reg number is needed for renaming logic,
       renaming logic is for both integer and floating point insts.  -->
@@ -242,8 +258,8 @@
         本来ならば，MemOrderにロード/ストアの実行回数のカウンタを使用すべき(現在，ストアのカウンタがない)
       -->
       <stat name="total_instructions" value="$(NUM_FETCHED_INSNS)"/>
-      <stat name="int_instructions" value="$(NUM_FETCHED_INSNS)"/>
-      <stat name="fp_instructions" value="0"/>
+      <stat name="int_instructions" value="$(NUM_INT_OPS)"/>
+      <stat name="fp_instructions" value="$(NUM_FP_OPS)"/>
       <stat name="branch_instructions" value="$(NUM_FETCHED_BRANCHES)"/>
       <stat name="branch_mispredictions" value="$(NUM_BPRED_MISS)"/>
       <stat name="load_instructions" value="$(NUM_LSQ_LOAD_ACCESSES)"/>
@@ -251,7 +267,7 @@
 
       <stat name="committed_instructions" value="$(NUM_COMMITTED_INSNS)"/>
       <stat name="committed_int_instructions" value="$(NUM_COMMITTED_INSNS)"/>
-      <stat name="committed_fp_instructions" value="0"/>
+      <stat name="committed_fp_instructions" value="$(NUM_EXECED_FP_OPS)"/>
       <stat name="pipeline_duty_cycle" value="1"/><!--<=1, runtime_ipc/peak_ipc; averaged for all cores if homogenous -->
       <!-- the following cycle stats are used for heterogeneous cores only,
         please ignore them if homogeneous cores -->
@@ -268,23 +284,21 @@
       <!-- RAT accesses -->
       <stat name="rename_reads" value="$(NUM_RENAME_READS)" /> <!--lookup in renaming logic -->
       <stat name="rename_writes" value="$(NUM_RENAME_WRITES)" /><!--update dest regs. renaming logic -->
-      <stat name="fp_rename_reads" value="0"/>
-      <stat name="fp_rename_writes" value="0"/>
+      <stat name="fp_rename_reads" value="$(NUM_FP_RENAME_READS)"/>
+      <stat name="fp_rename_writes" value="$(NUM_FP_RENAME_WRITES)"/>
       <!-- decode and rename stage use this, should be total ic - nop -->
       <!-- Inst window stats -->
       <stat name="inst_window_reads" value="$(NUM_ISSUED_INSNS)"/>
       <stat name="inst_window_writes" value="$(NUM_ISSUED_INSNS)"/>
       <stat name="inst_window_wakeup_accesses" value="$(NUM_ISSUED_INSNS)" scale="2"/>
-      <stat name="fp_inst_window_reads" value="0"/>
-      <stat name="fp_inst_window_writes" value="0"/>
-      <stat name="fp_inst_window_wakeup_accesses" value="0"/>
+      <stat name="fp_inst_window_reads" value="$(NUM_FP_OPS)"/>
+      <stat name="fp_inst_window_writes" value="$(NUM_FP_OPS)"/>
+      <stat name="fp_inst_window_wakeup_accesses" value="$(NUM_FP_OPS)" scale="2"/>
       <!--  RF accesses -->
       <stat name="int_regfile_reads" value="$(NUM_INT_RF_READS)" />
       <stat name="float_regfile_reads" value="$(NUM_FP_OPS)" scale="2"/>
-      <stat name="vec_regfile_reads" value="$(NUM_VEC_OPS)" scale="2"/>
       <stat name="int_regfile_writes" value="$(NUM_INT_RF_WRITES)" />
       <stat name="float_regfile_writes" value="$(NUM_FP_OPS)" scale="1"/>
-      <stat name="vec_regfile_writes" value="$(NUM_VEC_OPS)" scale="1"/>
       <!-- accesses to the working reg -->
       <stat name="function_calls" value="$(NUM_BR_OPS)" scale="0.25"/>
       <stat name="context_switches" value="0"/>
@@ -398,14 +412,14 @@
       <component id="system.core0.dcache" name="dcache">
               <!-- all the buffer related are optional -->
         <param name="dcache_config" value="op:enum">
-          <source scale="1024" value="$(L1D_SIZE)"/>
-          <source value="64"/>
-          <source value="$(L1D_WAY)"/>
-          <source value="1"/>
-          <source value="2"/>
-          <source value="2"/>
-          <source value="32"/>
-          <source value="0"/>
+          <source scale="1024" value="$(L1D_SIZE)"/>  <!-- Size -->
+          <source value="64"/>                        <!-- CacheLine -->
+          <source value="$(L1D_WAY)"/>                <!-- Way -->
+          <source value="1"/>                         <!-- Bank -->
+          <source value="2"/>                         <!-- Throughput -->
+          <source value="2"/>                         <!-- Latency -->
+          <source value="32"/>                        <!-- -->
+          <source value="1"/>                         <!-- Write Back=1, Write Through=0 -->
         </param>
         <param name="buffer_sizes" value="4, 4, 4, 4"/>
         <!-- cache controller buffer sizes: miss_buffer_size(MSHR),fill_buffer_size,prefetch_buffer_size,wb_buffer_size-->
@@ -520,6 +534,50 @@
     </component>
 
 <!--**********************************************************************-->
+    <component id="system.L30" name="L30">
+      <!-- Cache configuration
+      cache config:
+        -capacity (Byte),
+        -block_width (Byte),
+        -associativity,
+        -bank,
+        -throughput w.r.t. core clock,
+        -latency w.r.t. core clock,
+        -output_width,
+        -cache policy (0:write-through/1:write-back)
+      buffer size:
+        -miss buffer
+        -fill buffer
+        -prefetch buffer
+        -write-back buffer
+      -->
+      <param name="L3_config" value="op:enum">
+        <source scale="1024" value="$(L3_SIZE)"/>
+        <source value="64"/>
+        <source value="$(L3_WAY)"/>
+        <source value="16"/>
+        <source value="16"/>
+        <source value="16"/>
+        <source value="16"/>
+        <source value="1"/>
+      </param>
+
+      <!-- the parameters are capacity,block_width, associativity,bank, throughput w.r.t. core clock, latency w.r.t. core clock,-->
+      <param name="clockrate" value="850"/>
+      <param name="ports" value="1,1,1"/>
+      <!-- number of r, w, and rw ports -->
+      <param name="device_type" value="1"/>  <!--0: HP(High Performance Type); 1: LSTP(Low standby power) 2: LOP (Low Operating Power)  -->
+      <param name="buffer_sizes" value="16, 16, 16, 16"/>
+      <!-- cache controller buffer sizes: miss_buffer_size(MSHR),fill_buffer_size,prefetch_buffer_size,wb_buffer_size-->
+      <stat name="read_accesses" value="$(NUM_L3_READS)"/>
+      <stat name="write_accesses" value="$(NUM_L3_WRITES)"/>
+      <stat name="read_misses" value="$(NUM_L3_READ_MISSES)"/>
+      <stat name="write_misses" value="$(NUM_L3_WRITE_MISSES)"/>
+      <stat name="conflicts" value="0"/>
+      <stat name="duty_cycle" value="1.0"/>
+    </component>
+
+<!--**********************************************************************-->
     <component id="system.NoC0" name="noc0">
       <param name="clockrate" value="$(CLOCK)"/>
       <param name="type" value="0"/>
@@ -549,6 +607,34 @@
       <stat name="duty_cycle" value="1"/>
     </component>
 <!--**********************************************************************-->
+    <component id="system.mem" name="mem">
+      <!-- Main memory property -->
+      <param name="mem_tech_node" value="22"/>
+      <param name="device_clock" value="200"/><!--MHz, this is clock rate of the actual memory device, not the FSB -->
+      <param name="peak_transfer_rate" value="6400"/><!--MB/S-->
+      <param name="internal_prefetch_of_DRAM_chip" value="4"/>
+      <!-- 2 for DDR, 4 for DDR2, 8 for DDR3...-->
+      <!-- the device clock, peak_transfer_rate, and the internal prefetch decide the DIMM property -->
+      <!-- above numbers can be easily found from Wikipedia -->
+      <param name="capacity_per_channel" value="4096"/> <!-- MB -->
+      <!-- capacity_per_Dram_chip=capacity_per_channel/number_of_dimms/number_ranks/Dram_chips_per_rank
+      Current McPAT assumes single DIMMs are used.-->
+      <param name="number_ranks" value="2"/>
+      <param name="num_banks_of_DRAM_chip" value="8"/>
+      <param name="Block_width_of_DRAM_chip" value="64"/> <!-- B -->
+      <param name="output_width_of_DRAM_chip" value="8"/>
+      <!--number of Dram_chips_per_rank=" 72/output_width_of_DRAM_chip-->
+      <!--number of Dram_chips_per_rank=" 72/output_width_of_DRAM_chip-->
+      <param name="page_size_of_DRAM_chip" value="8"/> <!-- 8 or 16 -->
+      <param name="burstlength_of_DRAM_chip" value="8"/>
+      <stat name="memory_accesses" value="op:add">
+        <source value="$(NUM_MEM_READS)"/>
+        <source value="$(NUM_MEM_WRITES)"/>
+      </stat>
+      <stat name="memory_reads" value="$(NUM_MEM_READS)"/>
+      <stat name="memory_writes" value="$(NUM_MEM_WRITES)"/>
+
+    </component>
     <component id="system.mc" name="mc">
       <!-- Memory controllers are for DDR(2,3...) DIMMs -->
       <!-- current version of McPAT uses published values for base parameters of memory controller
@@ -568,6 +654,12 @@
       <param name="databus_width" value="128"/>
       <param name="addressbus_width" value="51"/>
       <!-- McPAT will add the control bus width to the addressbus width automatically -->
+      <stat name="memory_accesses" value="op:add">
+        <source value="$(NUM_MEM_READS)"/>
+        <source value="$(NUM_MEM_WRITES)"/>
+      </stat>
+      <stat name="memory_reads" value="$(NUM_MEM_READS)"/>
+      <stat name="memory_writes" value="$(NUM_MEM_WRITES)"/>
       <!-- McPAT does not track individual mc, instead, it takes the total accesses and calculate
       the average power per MC or per channel. This is sufficient for most application.
       Further track down can be easily added in later versions. -->
@@ -619,13 +711,13 @@
     <param name="number_of_L2Directories" value="0"/>
     <param name="number_of_L2s" value="1"/> <!-- This number means how many L2 clusters in each cluster there can be multiple banks/ports -->
     <param name="Private_L2" value="1"/><!--1 Private, 0 shared/coherent -->
-    <param name="number_of_L3s" value="0"/> <!-- This number means how many L3 clusters -->
-    <param name="number_of_NoCs" value="1"/>
+    <param name="number_of_L3s" value="1"/> <!-- This number means how many L3 clusters -->
+    <param name="number_of_NoCs" value="0"/>
     <param name="homogeneous_cores" value="1"/><!--1 means homo -->
     <param name="homogeneous_L2s" value="1"/>
     <param name="homogeneous_L1Directorys" value="1"/>
     <param name="homogeneous_L2Directorys" value="1"/>
-    <param name="homogeneous_L3s" value="0"/>
+    <param name="homogeneous_L3s" value="1"/>
     <param name="homogeneous_ccs" value="1"/><!--cache coherence hardware -->
     <param name="homogeneous_NoCs" value="1"/>
     <param name="core_tech_node" value="22"/><!-- nm -->
@@ -636,7 +728,7 @@
     <param name="device_type" value="0"/><!--0: HP(High Performance Type); 1: LSTP(Low standby power) 2: LOP (Low Operating Power)  -->
     <param name="longer_channel_device" value="1"/><!-- 0 no use; 1 use when appropriate -->
     <param name="machine_bits" value="64"/>
-    <param name="vrf_width_bits" value="128"/>
+    <param name="fp_reg_width" value="$(FP_WIDTH)"/>
     <param name="virtual_address_width" value="64"/>
     <param name="physical_address_width" value="52"/>
     <param name="virtual_memory_page_size" value="4096"/>
