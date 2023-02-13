@@ -1,5 +1,6 @@
 #include "data8.h"
 #include "data16.h"
+#include "sim_api.h"
 #include "count_cycles.h"
 #include <riscv_vector.h>
 #include <stdio.h>
@@ -37,16 +38,16 @@ uint64_t gather16(const uint16_t* val, const uint16_t* idx_ptr, uint64_t n)
 
 int __attribute__((optimize("O0"))) main() {
 
-  uint64_t result = gather16 (v_data16, v_index16, 128);
+  uint64_t result = gather16 (v_data16, v_index16, 16);
   printf("1st try: result = %ld\n", result);
 
   SimRoiStart();
   start_konatadump();
-  result = gather16 (v_data16, v_index16, 128);
+  result = gather16 (v_data16, v_index16, 16);
   SimRoiEnd();
   stop_konatadump();
 
-  printf("result = %ld, cycle = %ld, vecinst = %ld\n", result, end_cycle - start_cycle, end_vecinst - start_vecinst);
+  printf("result = %ld\n", result);
 
   return 0;
 }

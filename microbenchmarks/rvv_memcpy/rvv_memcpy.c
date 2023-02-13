@@ -4,6 +4,16 @@
 #include "sim_api.h"
 #include "count_utils.h"
 
+#define N (32 * 1024 / sizeof(double))
+// const int N = 32;
+// #define N (128)
+
+// data gen
+
+double A[N] __attribute__((aligned(64))) ;
+double golden[N] __attribute__((aligned(64)));
+double actual[N] __attribute__((aligned(64)));
+
 void *memcpy_vec(void *dst, void *src, size_t n) {
   void *save = dst;
   // copy data byte by byte
@@ -16,17 +26,12 @@ void *memcpy_vec(void *dst, void *src, size_t n) {
 }
 
 int __attribute__((optimize("O0"))) main() {
-  const int N = 32 * 1024 / sizeof(double);
-  // const int N = 256;
   const uint32_t seed = 0xdeadbeef;
   srand(seed);
 
-  // data gen
-  double A[N];
   gen_rand_1d(A, N);
 
   // compute
-  double golden[N], actual[N];
   memcpy(golden, A, sizeof(A));
 
   memcpy_vec(actual, A, sizeof(A));
