@@ -28,6 +28,7 @@ CFG_VEC_TO_SCALAR_XML  = $(realpath ../../mcpat_common/cfg.vec_to_scalar.xml ../
 MCPAT_TEMPLATE_XML = $(realpath ../../../mcpat_common/mcpat.template.vec.xml ../../mcpat_common/mcpat.template.vec.xml)
 
 VLEN ?= 256
+DLEN ?= $(VLEN)
 
 ifeq ($(APP_NAME),)
 	$(error "APP_NAME should be set")
@@ -102,12 +103,12 @@ runspike-debug-s : $(serial_target)
 	$(SPIKE) --isa=rv64gc  -l --log-commits --sift $(serial_sift) $(PK) $^ $(SPIKE_OPTS) > spike-s.log 2>&1
 
 runsniper-ooo-v: $(rvv_sift)
-	mkdir -p ooo.v.$(VLEN) && \
-	cd ooo.v.$(VLEN) && \
-	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-mediumboom.vlen$(VLEN).cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).ooo.v.$(VLEN).log 2>&1 && \
-	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}'  $(basename $(notdir $(rvv_target))).ooo.v.$(VLEN).log > cycle && \
-	xz -f $(basename $(notdir $(rvv_target))).ooo.v.$(VLEN).log && \
-	mv o3_trace.out $(APP_NAME).$(VLEN).ooo.out && \
+	mkdir -p ooo.v.v$(VLEN)_d$(DLEN) && \
+	cd ooo.v.v$(VLEN)_d$(DLEN) && \
+	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-mediumboom.v$(VLEN)_d$(DLEN).cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).ooo.v.v$(VLEN)_d$(DLEN).log 2>&1 && \
+	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}'  $(basename $(notdir $(rvv_target))).ooo.v.v$(VLEN)_d$(DLEN).log > cycle && \
+	xz -f $(basename $(notdir $(rvv_target))).ooo.v.v$(VLEN)_d$(DLEN).log && \
+	mv o3_trace.out $(APP_NAME).v$(VLEN)_d$(DLEN).ooo.out && \
 	ln -sf $(CFG_SCALAR_OOO_XML) cfg.xml && \
 	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo && \
 	mv sim.stats.mcpat.input.xml cfg.scalar.input.xml && \
@@ -128,12 +129,12 @@ runsniper-ooo-v: $(rvv_sift)
 	paste -d',' cfg.scalar.csv cfg.vec128.ooo.csv  cfg.vec_to_scalar.csv cfg.scalar_to_vec.csv | sed 's/,sim.stats.mcpat.output.txt//g' | sed 's/^sim.stats.mcpat.output.txt/$(APP_NAME)-OoO/g' > power.csv
 
 runsniper-ino-v: $(rvv_sift)
-	mkdir -p ino.v.$(VLEN) && \
-	cd ino.v.$(VLEN) && \
-	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-inorderboom.vlen$(VLEN).cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).ino.v.$(VLEN).log 2>&1 && \
-	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}'  $(basename $(notdir $(rvv_target))).ino.v.$(VLEN).log > cycle && \
-	xz -f $(basename $(notdir $(rvv_target))).ino.v.$(VLEN).log && \
-	mv o3_trace.out $(APP_NAME).$(VLEN).ino.out && \
+	mkdir -p ino.v.v$(VLEN)_d$(DLEN) && \
+	cd ino.v.v$(VLEN)_d$(DLEN) && \
+	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-inorderboom.v$(VLEN)_d$(DLEN).cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).ino.v.v$(VLEN)_d$(DLEN).log 2>&1 && \
+	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}'  $(basename $(notdir $(rvv_target))).ino.v.v$(VLEN)_d$(DLEN).log > cycle && \
+	xz -f $(basename $(notdir $(rvv_target))).ino.v.v$(VLEN)_d$(DLEN).log && \
+	mv o3_trace.out $(APP_NAME).v$(VLEN)_d$(DLEN).ino.out && \
 	ln -sf $(CFG_SCALAR_INO_XML) cfg.xml && \
 	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo && \
 	mv sim.stats.mcpat.input.xml cfg.scalar.input.xml && \
@@ -147,12 +148,12 @@ runsniper-ino-v: $(rvv_sift)
 	paste -d',' cfg.scalar.csv cfg.vec128.ino.csv | sed 's/,sim.stats.mcpat.output.txt//g' | sed 's/^sim.stats.mcpat.output.txt/$(APP_NAME)-InO/g' > power.csv
 
 runsniper-vio-v: $(rvv_sift)
-	mkdir -p vio.v.$(VLEN) && \
-	cd vio.v.$(VLEN) && \
-	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-vinorderboom.vlen$(VLEN).cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).vio.log 2>&1 && \
+	mkdir -p vio.v.v$(VLEN)_d$(DLEN) && \
+	cd vio.v.v$(VLEN)_d$(DLEN) && \
+	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-vinorderboom.v$(VLEN)_d$(DLEN).cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).vio.log 2>&1 && \
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}'  $(basename $(notdir $(rvv_target))).vio.log > cycle && \
 	xz -f $(basename $(notdir $(rvv_target))).vio.log && \
-	mv o3_trace.out $(APP_NAME).$(VLEN).vio.out
+	mv o3_trace.out $(APP_NAME).v$(VLEN)_d$(DLEN).vio.out
 
 	# ln -sf $(CFG_SCALAR_OOO_XML) cfg.xml && \
 	# python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo && \
@@ -175,12 +176,12 @@ runsniper-vio-v: $(rvv_sift)
 
 # Non-Gather-Scatter Merge
 runsniper-vio-ngs-v: $(rvv_sift)
-	mkdir -p vio.v.ngs.$(VLEN) && \
-	cd vio.v.ngs.$(VLEN) && \
-	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-inactive-gatherscatter.vlen$(VLEN).cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).vio.ngs.log 2>&1 && \
+	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN) && \
+	cd vio.v.ngs.v$(VLEN)_d$(DLEN) && \
+	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-inactive-gatherscatter.v$(VLEN)_d$(DLEN).cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).vio.ngs.log 2>&1 && \
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}'  $(basename $(notdir $(rvv_target))).vio.ngs.log > cycle && \
 	xz -f $(basename $(notdir $(rvv_target))).vio.ngs.log && \
-	mv o3_trace.out $(APP_NAME).$(VLEN).vio.ngs.out && \
+	mv o3_trace.out $(APP_NAME).v$(VLEN)_d$(DLEN).vio.ngs.out && \
 	ln -sf $(CFG_SCALAR_OOO_XML) cfg.xml && \
 	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo && \
 	mv sim.stats.mcpat.input.xml cfg.scalar.input.xml && \
@@ -203,10 +204,10 @@ runsniper-vio-ngs-v: $(rvv_sift)
 runsniper-ooo-s: $(serial_sift)
 	mkdir -p ooo.s && \
 	cd ooo.s && \
-	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-mediumboom.vlen$(VLEN).cfg --traces=../$^ > $(basename $(notdir $(serial_target))).ooo.s.log 2>&1 && \
+	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-mediumboom.v$(VLEN)_d$(DLEN).cfg --traces=../$^ > $(basename $(notdir $(serial_target))).ooo.s.log 2>&1 && \
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}'  $(basename $(notdir $(serial_target))).ooo.s.log > cycle && \
 	xz -f $(basename $(notdir $(serial_target))).ooo.s.log && \
-	mv o3_trace.out $(APP_NAME).$(VLEN).ooo.s.out && \
+	mv o3_trace.out $(APP_NAME).v$(VLEN)_d$(DLEN).ooo.s.out && \
 	ln -sf $(CFG_SCALAR_OOO_XML) cfg.xml && \
 	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo && \
 	mv sim.stats.mcpat.input.xml cfg.scalar.input.xml && \
@@ -216,10 +217,10 @@ runsniper-ooo-s: $(serial_sift)
 runsniper-ino-s: $(serial_sift)
 	mkdir -p ino.s && \
 	cd ino.s && \
-	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-inorderboom.vlen$(VLEN).cfg --traces=../$^ > $(basename $(notdir $(serial_target))).ino.s.log 2>&1 && \
+	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-inorderboom.v$(VLEN)_d$(DLEN).cfg --traces=../$^ > $(basename $(notdir $(serial_target))).ino.s.log 2>&1 && \
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}'  $(basename $(notdir $(serial_target))).ino.s.log > cycle && \
 	xz -f $(basename $(notdir $(serial_target))).ino.s.log && \
-	mv o3_trace.out $(APP_NAME).$(VLEN).ino.s.out && \
+	mv o3_trace.out $(APP_NAME).v$(VLEN)_d$(DLEN).ino.s.out && \
 	ln -sf $(CFG_SCALAR_INO_XML) cfg.xml && \
 	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo && \
 	mv sim.stats.mcpat.input.xml cfg.scalar.input.xml && \
@@ -227,15 +228,15 @@ runsniper-ino-s: $(serial_sift)
 	paste -d',' cfg.scalar.csv | sed 's/,sim.stats.mcpat.output.txt//g' | sed 's/^sim.stats.mcpat.output.txt/$(APP_NAME)-VIO/g' > power.csv
 
 _power-ooo-v:
-	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) -C ooo.v.$(VLEN)
+	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C ooo.v.v$(VLEN)_d$(DLEN)
 _power-vio-v:
-	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) -C vio.v.$(VLEN)
+	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C vio.v.v$(VLEN)_d$(DLEN)
 _power-ino-v:
-	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) -C ino.v.$(VLEN)
+	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C ino.v.v$(VLEN)_d$(DLEN)
 _power-ooo-s:
-	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) -C ooo.s
+	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C ooo.s
 _power-ino-s:
-	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) -C ino.s
+	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C ino.s
 
 sniper2mcpat:
 	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML)
