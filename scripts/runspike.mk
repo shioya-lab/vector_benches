@@ -153,26 +153,25 @@ runsniper-vio-v: $(rvv_sift)
 	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-vinorderboom.v$(VLEN)_d$(DLEN).cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).vio.log 2>&1 && \
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}'  $(basename $(notdir $(rvv_target))).vio.log > cycle && \
 	xz -f $(basename $(notdir $(rvv_target))).vio.log && \
-	mv o3_trace.out $(APP_NAME).v$(VLEN)_d$(DLEN).vio.out
-
-	# ln -sf $(CFG_SCALAR_OOO_XML) cfg.xml && \
-	# python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo && \
-	# mv sim.stats.mcpat.input.xml cfg.scalar.input.xml && \
-	# mv sim.stats.mcpat.output.txt cfg.scalar.output.txt && \
-	# tr -d '\r' < sim.stats.mcpat.output.filtered.csv > cfg.scalar.csv && \
-	# ln -sf $(CFG_VEC_INO_XML) cfg.xml && \
-	# python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec && \
-	# mv sim.stats.mcpat.input.xml cfg.vec128.ino.input.xml && \
-	# tr -d '\r' < sim.stats.mcpat.output.filtered.csv > cfg.vec128.ino.csv && \
-	# ln -sf $(CFG_SCALAR_TO_VEC_INO_XML) cfg.xml && \
-	# python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_to_vec && \
-	# mv sim.stats.mcpat.input.xml cfg.scalar_to_vec.input.xml && \
-	# tr -d '\r' < sim.stats.mcpat.output.filtered.csv > cfg.scalar_to_vec.csv && \
-	# ln -sf $(CFG_VEC_TO_SCALAR_XML) cfg.xml && \
-	# python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec_to_scalar && \
-	# mv sim.stats.mcpat.input.xml cfg.vec_to_scalar.input.xml && \
-	# tr -d '\r' < sim.stats.mcpat.output.filtered.csv > cfg.vec_to_scalar.csv && \
-	# paste -d',' cfg.scalar.csv cfg.vec128.ino.csv  cfg.vec_to_scalar.csv cfg.scalar_to_vec.csv | sed 's/,sim.stats.mcpat.output.txt//g' | sed 's/^sim.stats.mcpat.output.txt/$(APP_NAME)-VIO/g' > power.csv
+	mv o3_trace.out $(APP_NAME).v$(VLEN)_d$(DLEN).vio.out \
+	ln -sf $(CFG_SCALAR_OOO_XML) cfg.xml && \
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo && \
+	mv sim.stats.mcpat.input.xml cfg.scalar.input.xml && \
+	mv sim.stats.mcpat.output.txt cfg.scalar.output.txt && \
+	tr -d '\r' < sim.stats.mcpat.output.filtered.csv > cfg.scalar.csv && \
+	ln -sf $(CFG_VEC_INO_XML) cfg.xml && \
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec && \
+	mv sim.stats.mcpat.input.xml cfg.vec128.ino.input.xml && \
+	tr -d '\r' < sim.stats.mcpat.output.filtered.csv > cfg.vec128.ino.csv && \
+	ln -sf $(CFG_SCALAR_TO_VEC_INO_XML) cfg.xml && \
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_to_vec && \
+	mv sim.stats.mcpat.input.xml cfg.scalar_to_vec.input.xml && \
+	tr -d '\r' < sim.stats.mcpat.output.filtered.csv > cfg.scalar_to_vec.csv && \
+	ln -sf $(CFG_VEC_TO_SCALAR_XML) cfg.xml && \
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec_to_scalar && \
+	mv sim.stats.mcpat.input.xml cfg.vec_to_scalar.input.xml && \
+	tr -d '\r' < sim.stats.mcpat.output.filtered.csv > cfg.vec_to_scalar.csv && \
+	paste -d',' cfg.scalar.csv cfg.vec128.ino.csv  cfg.vec_to_scalar.csv cfg.scalar_to_vec.csv | sed 's/,sim.stats.mcpat.output.txt//g' | sed 's/^sim.stats.mcpat.output.txt/$(APP_NAME)-VIO/g' > power.csv
 
 # Non-Gather-Scatter Merge
 runsniper-vio-ngs-v: $(rvv_sift)
