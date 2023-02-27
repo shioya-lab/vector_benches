@@ -153,7 +153,7 @@ runsniper-vio-v: $(rvv_sift)
 	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --power -v -c $(SNIPER_ROOT)/config/riscv-base.cfg -c $(SNIPER_ROOT)/config/riscv-vinorderboom.v$(VLEN)_d$(DLEN).cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).vio.log 2>&1 && \
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}'  $(basename $(notdir $(rvv_target))).vio.log > cycle && \
 	xz -f $(basename $(notdir $(rvv_target))).vio.log && \
-	mv o3_trace.out $(APP_NAME).v$(VLEN)_d$(DLEN).vio.out \
+	mv o3_trace.out $(APP_NAME).v$(VLEN)_d$(DLEN).vio.out && \
 	ln -sf $(CFG_SCALAR_OOO_XML) cfg.xml && \
 	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo && \
 	mv sim.stats.mcpat.input.xml cfg.scalar.input.xml && \

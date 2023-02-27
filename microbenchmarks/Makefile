@@ -16,7 +16,8 @@ DIR += rvv_strncpy
 
 SUBDIRSCLEAN = $(addsuffix clean,$(DIR))
 
-VLEN = 256
+VLEN ?= 256
+DLEN ?= $(VLEN)
 
 .PHONY: $(DIR) $(SUBDIRSCLEAN)
 
@@ -32,7 +33,7 @@ $(DIR):
 
 stats:
 	for dir in $(DIR); do \
-		echo -n $$dir " "; paste $${dir}/ino.v.$(VLEN)/cycle $${dir}/vio.v.$(VLEN)/cycle $${dir}/ooo.v.$(VLEN)/cycle; \
+		echo -n $$dir " "; paste $${dir}/ino.v.v$(VLEN)_d$(DLEN)/cycle $${dir}/vio.v.v$(VLEN)_d$(DLEN)/cycle $${dir}/ooo.v.v$(VLEN)_d$(DLEN)/cycle; \
 	done
 
 clean: $(SUBDIRSCLEAN)

@@ -5,7 +5,7 @@ run:
 
 SOURCE_FILES = rvv_saxpy.c
 
-APP_NAME = rvv_saxpy
+APP_NAME = rvv_saxpy_$(VLEN)
 serial_target = DUMMY
 
 include ../microbenches.mk
