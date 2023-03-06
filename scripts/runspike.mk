@@ -58,6 +58,9 @@ power: _power-ooo-v _power-vio-v _power-ino-v
 
 runsniper-v:
 	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-ino-v
+	cat ino.v.v$(VLEN)_d$(DLEN)/power.csv > power_v$(VLEN)_d$(VLEN).csv
+	tail +2 vio.v.v$(VLEN)_d$(DLEN)/power.csv >> power_v$(VLEN)_d$(VLEN).csv
+	tail +2 ooo.v.v$(VLEN)_d$(DLEN)/power.csv >> power_v$(VLEN)_d$(VLEN).csv
 
 runsniper-s:
 	$(MAKE) runsniper-ooo-s runsniper-ino-s
@@ -94,35 +97,35 @@ runspike-debug-s : $(serial_target)
 runsniper-ooo-v: $(rvv_sift)
 	mkdir -p ooo.v.v$(VLEN)_d$(DLEN)
 	$(MAKE) execute-sniper      -C ooo.v.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=ooo APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
-	$(MAKE) execute-mcpat-ooo-v -C ooo.v.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN)
+	$(MAKE) execute-mcpat-ooo-v -C ooo.v.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
 
 runsniper-ino-v: $(rvv_sift)
 	mkdir -p ino.v.v$(VLEN)_d$(DLEN)
 	$(MAKE) execute-sniper      -C ino.v.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=ino APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
-	$(MAKE) execute-mcpat-ino-v -C ino.v.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN)
+	$(MAKE) execute-mcpat-ino-v -C ino.v.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
 
 runsniper-vio-v: $(rvv_sift)
 	mkdir -p vio.v.v$(VLEN)_d$(DLEN)
 	$(MAKE) execute-sniper      -C vio.v.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=vio APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
-	$(MAKE) execute-mcpat-vio-v -C vio.v.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN)
+	$(MAKE) execute-mcpat-vio-v -C vio.v.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
 
 # Non-Gather-Scatter Merge
 runsniper-vio-ngs-v: $(rvv_sift)
 	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN)
 	$(MAKE) execute-sniper      -C vio.v.ngs.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=vio APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
-	$(MAKE) execute-mcpat-vio-v -C vio.v.ngs.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN)
+	$(MAKE) execute-mcpat-vio-v -C vio.v.ngs.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
 
 
 runsniper-ooo-s: $(serial_sift)
 	mkdir -p ooo.s
 	$(MAKE) execute-sniper      -C ooo.s -f $(SNIPER_MK) MODE=ooo APP_NAME=$(APP_NAME) SIFT=$(serial_sift)
-	$(MAKE) execute-mcpat-ooo-s -C ooo.s -f $(MCPAT_MK)
+	$(MAKE) execute-mcpat-ooo-s -C ooo.s -f $(MCPAT_MK) APP_NAME=$(APP_NAME)
 
 
 runsniper-ino-s: $(serial_sift)
 	mkdir -p ino.s
 	$(MAKE) execute-sniper      -C ino.s -f $(SNIPER_MK) MODE=ino APP_NAME=$(APP_NAME) SIFT=$(serial_sift)
-	$(MAKE) execute-mcpat-ino-s -C ino.s -f $(MCPAT_MK)
+	$(MAKE) execute-mcpat-ino-s -C ino.s -f $(MCPAT_MK) APP_NAME=$(APP_NAME)
 
 
 _power-ooo-v:
