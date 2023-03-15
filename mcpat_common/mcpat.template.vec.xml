@@ -13,9 +13,6 @@
   <macro name="INT_ISSUE_WIDTH" value="2"/>
   <!-- macro name="MEM_ISSUE_WIDTH" value="$(MEM_ISSUE_WIDTH)"/ -->
 
-  <macro name="INT_PRF_SIZE" value="128"/>
-  <macro name="FP_PRF_SIZE" value="128"/>
-
   <macro name="ISSUE_QUEUE_SIZE" value="36"/>
   <macro name="ROB_SIZE" value="128"/>
   <!-- macro name="LQ_SIZE" value="$(LQ_SIZE)"/ -->
@@ -727,7 +724,7 @@
     <param name="interconnect_projection_type" value="0"/><!--0: aggressive wire technology; 1: conservative wire technology -->
     <param name="device_type" value="0"/><!--0: HP(High Performance Type); 1: LSTP(Low standby power) 2: LOP (Low Operating Power)  -->
     <param name="longer_channel_device" value="1"/><!-- 0 no use; 1 use when appropriate -->
-    <param name="machine_bits" value="64"/>
+    <param name="machine_bits" value="$(FP_WIDTH)"/>
     <param name="fp_reg_width" value="$(FP_WIDTH)"/>
     <param name="virtual_address_width" value="64"/>
     <param name="physical_address_width" value="52"/>

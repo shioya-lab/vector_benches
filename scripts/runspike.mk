@@ -58,9 +58,9 @@ power: _power-ooo-v _power-vio-v _power-ino-v
 
 runsniper-v:
 	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-ino-v
-	cat ino.v.v$(VLEN)_d$(DLEN)/power.csv > power_v$(VLEN)_d$(VLEN).csv
-	tail +2 vio.v.v$(VLEN)_d$(DLEN)/power.csv >> power_v$(VLEN)_d$(VLEN).csv
-	tail +2 ooo.v.v$(VLEN)_d$(DLEN)/power.csv >> power_v$(VLEN)_d$(VLEN).csv
+	cat ino.v.v$(VLEN)_d$(DLEN)/power.csv > power_v$(VLEN)_d$(DLEN).csv
+	tail +2 vio.v.v$(VLEN)_d$(DLEN)/power.csv >> power_v$(VLEN)_d$(DLEN).csv
+	tail +2 ooo.v.v$(VLEN)_d$(DLEN)/power.csv >> power_v$(VLEN)_d$(DLEN).csv
 
 runsniper-s:
 	$(MAKE) runsniper-ooo-s runsniper-ino-s

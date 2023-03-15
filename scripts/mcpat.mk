@@ -5,45 +5,45 @@ MCPAT_MK     = $(realpath ../../../scripts/mcpat.mk ../../../../scripts/mcpat.mk
 SNIPER2MCPAT = $(realpath ../../../../sniper2mcpat/sniper2mcpat.py ../../../../../sniper2mcpat/sniper2mcpat.py)
 
 MCPAT_TEMPLATE_XML         = $(realpath ../../mcpat_common/mcpat.template.vec.xml    ../../../mcpat_common/mcpat.template.vec.xml    ../../../../mcpat_common/mcpat.template.vec.xml)
-CFG_INO_XML         	   = $(realpath ../../mcpat_common/cfg.$(VLEN).ino.xml       ../../../mcpat_common/cfg.$(VLEN).ino.xml    	 ../../../../mcpat_common/cfg.$(VLEN).ino.xml)
-CFG_VIO_XML         	   = $(realpath ../../mcpat_common/cfg.$(VLEN).vio.xml       ../../../mcpat_common/cfg.$(VLEN).vio.xml    	 ../../../../mcpat_common/cfg.$(VLEN).vio.xml)
-CFG_VEC_OOO_XML     	   = $(realpath ../../mcpat_common/cfg.vec$(VLEN).ooo.xml    ../../../mcpat_common/cfg.vec$(VLEN).ooo.xml 	 ../../../../mcpat_common/cfg.vec$(VLEN).ooo.xml)
-CFG_VEC_INO_XML     	   = $(realpath ../../mcpat_common/cfg.vec$(VLEN).ino.xml    ../../../mcpat_common/cfg.vec$(VLEN).ino.xml 	 ../../../../mcpat_common/cfg.vec$(VLEN).ino.xml)
+CFG_INO_XML         	   = $(realpath ../../mcpat_common/cfg.$(DLEN).ino.xml       ../../../mcpat_common/cfg.$(DLEN).ino.xml    	 ../../../../mcpat_common/cfg.$(DLEN).ino.xml)
+CFG_VIO_XML         	   = $(realpath ../../mcpat_common/cfg.$(DLEN).vio.xml       ../../../mcpat_common/cfg.$(DLEN).vio.xml    	 ../../../../mcpat_common/cfg.$(DLEN).vio.xml)
+CFG_VEC_OOO_XML     	   = $(realpath ../../mcpat_common/cfg.vec$(DLEN).ooo.xml    ../../../mcpat_common/cfg.vec$(DLEN).ooo.xml 	 ../../../../mcpat_common/cfg.vec$(DLEN).ooo.xml)
+CFG_VEC_INO_XML     	   = $(realpath ../../mcpat_common/cfg.vec$(DLEN).ino.xml    ../../../mcpat_common/cfg.vec$(DLEN).ino.xml 	 ../../../../mcpat_common/cfg.vec$(DLEN).ino.xml)
 CFG_SCALAR_OOO_XML  	   = $(realpath ../../mcpat_common/cfg.scalar.ooo.xml        ../../../mcpat_common/cfg.scalar.ooo.xml     	 ../../../../mcpat_common/cfg.scalar.ooo.xml)
 CFG_SCALAR_INO_XML  	   = $(realpath ../../mcpat_common/cfg.scalar.ino.xml        ../../../mcpat_common/cfg.scalar.ino.xml     	 ../../../../mcpat_common/cfg.scalar.ino.xml)
 CFG_SCALAR_TO_VEC_OOO_XML  = $(realpath ../../mcpat_common/cfg.scalar_to_vec.xml     ../../../mcpat_common/cfg.scalar_to_vec.xml  	 ../../../../mcpat_common/cfg.scalar_to_vec.xml)
 CFG_SCALAR_TO_VEC_INO_XML  = $(realpath ../../mcpat_common/cfg.scalar_to_vec.ino.xml ../../../mcpat_common/cfg.scalar_to_vec.ino.xml ../../../../mcpat_common/cfg.scalar_to_vec.ino.xml)
 CFG_VEC_TO_SCALAR_XML      = $(realpath ../../mcpat_common/cfg.vec_to_scalar.xml     ../../../mcpat_common/cfg.vec_to_scalar.xml     ../../../../mcpat_common/cfg.vec_to_scalar.xml)
 
-execute-mcpat-ooo-v: mcpat_scalar_ooo mcpat_vec_ooo mcpat_scalar_to_vec mcpat_vec_to_scalar
-	paste -d',' scalar_ooo/scalar.csv vec/vec.csv  vec_to_scalar/vec_to_scalar.csv scalar_to_vec/scalar_to_vec.csv | \
-		sed 's/,sim.stats.mcpat.output.txt//g' | \
-		sed 's/^sim.stats.mcpat.output.txt/$(APP_NAME)-OoO-V/g' > power.csv
-	sed -i "2s/$$/,$(shell cat cycle)/" power.csv
+execute-mcpat-ooo-v: mcpat_scalar_ooo mcpat_vec_ooo mcpat_vec_ino mcpat_scalar_to_vec mcpat_vec_to_scalar
+	paste scalar_ooo/scalar.csv vec_ooo/vec.csv vec_ino/vec.csv  vec_to_scalar/vec_to_scalar.csv scalar_to_vec/scalar_to_vec.csv | \
+		sed 's/sim.stats.mcpat.output.txt//g' | \
+		sed 's/^/$(APP_NAME)-OoO-V,$(shell cat cycle)/g' > power.csv
+#	sed -i "2s/$$/,$(shell cat cycle)/" power.csv
 
-execute-mcpat-vio-v: mcpat_scalar_ooo mcpat_vec_ino mcpat_scalar_to_vec mcpat_vec_to_scalar
-	paste -d',' scalar_ooo/scalar.csv vec/vec.csv  vec_to_scalar/vec_to_scalar.csv scalar_to_vec/scalar_to_vec.csv | \
-		sed 's/,sim.stats.mcpat.output.txt//g' | \
-		sed 's/^sim.stats.mcpat.output.txt/$(APP_NAME)-VIO-V/g' > power.csv
-	sed -i "2s/$$/,$(shell cat cycle)/" power.csv
+execute-mcpat-vio-v: mcpat_scalar_ooo mcpat_vec_ooo mcpat_vec_ino mcpat_scalar_to_vec mcpat_vec_to_scalar
+	paste scalar_ooo/scalar.csv vec_ooo/vec.csv vec_ino/vec.csv  vec_to_scalar/vec_to_scalar.csv scalar_to_vec/scalar_to_vec.csv | \
+		sed 's/sim.stats.mcpat.output.txt//g' | \
+		sed 's/^/$(APP_NAME)-VIO-V,$(shell cat cycle)/g' > power.csv
+#	sed -i "2s/$$/,$(shell cat cycle)/" power.csv
 
-execute-mcpat-ino-v: mcpat_scalar_ino mcpat_vec_ino
-	paste -d',' scalar_ino/scalar.csv vec/vec.csv | \
-		sed 's/,sim.stats.mcpat.output.txt//g' | \
-		sed 's/^sim.stats.mcpat.output.txt/$(APP_NAME)-InO-V/g' > power.csv
-	sed -i "2s/$$/,$(shell cat cycle)/" power.csv
+execute-mcpat-ino-v: mcpat_scalar_ooo mcpat_vec_ooo mcpat_vec_ino mcpat_scalar_to_vec mcpat_vec_to_scalar
+	paste scalar_ooo/scalar.csv vec_ooo/vec.csv vec_ino/vec.csv  vec_to_scalar/vec_to_scalar.csv scalar_to_vec/scalar_to_vec.csv | \
+		sed 's/sim.stats.mcpat.output.txt//g' | \
+		sed 's/^/$(APP_NAME)-InO-V,$(shell cat cycle)/g' > power.csv
+#	sed -i "2s/$$/,$(shell cat cycle)/" power.csv
 
 execute-mcpat-ooo-s: mcpat_scalar_ooo
-	paste -d',' scalar_ooo/scalar.csv | \
-		sed 's/,sim.stats.mcpat.output.txt//g' | \
-		sed 's/^sim.stats.mcpat.output.txt/$(APP_NAME)-OoO-S/g' > power.csv
-	sed -i "2s/$$/,$(shell cat cycle)/" power.csv
+	paste scalar_ooo/scalar.csv | \
+		sed 's/sim.stats.mcpat.output.txt//g' | \
+		sed 's/^/$(APP_NAME)-OoO-S,$(shell cat cycle)/g' > power.csv
+#	sed -i "2s/$$/,$(shell cat cycle)/" power.csv
 
 execute-mcpat-ino-s: mcpat_scalar_ino
-	paste -d',' scalar_ino/scalar.csv | \
-		sed 's/,sim.stats.mcpat.output.txt//g' | \
-		sed 's/^sim.stats.mcpat.output.txt/$(APP_NAME)-InO-S/g' > power.csv
-	sed -i "2s/$$/,$(shell cat cycle)/" power.csv
+	paste scalar_ino/scalar.csv | \
+		sed 's/sim.stats.mcpat.output.txt//g' | \
+		sed 's/^/$(APP_NAME)-InO-S,$(shell cat cycle)/g' > power.csv
+#	sed -i "2s/$$/,$(shell cat cycle)/" power.csv
 
 
 
@@ -64,28 +64,28 @@ mcpat_scalar_ino:
 _mcpat_scalar_ino:
 	ln -sf $(CFG_SCALAR_INO_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo # Scalar_OOO execution and extract parts
 	tr -d '\r' < sim.stats.mcpat.output.filtered.csv > scalar.csv
 
 mcpat_vec_ooo:
-	mkdir -p vec
-	$(MAKE) _mcpat_vec_ooo -C vec -f $(MCPAT_MK)
+	mkdir -p vec_ooo
+	$(MAKE) _mcpat_vec_ooo -C vec_ooo -f $(MCPAT_MK)
 
 _mcpat_vec_ooo:
 	ln -sf $(CFG_VEC_OOO_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec_ooo
 	tr -d '\r' < sim.stats.mcpat.output.filtered.csv > vec.csv
 
 
 mcpat_vec_ino:
-	mkdir -p vec
-	$(MAKE) _mcpat_vec_ino -C vec -f $(MCPAT_MK)
+	mkdir -p vec_ino
+	$(MAKE) _mcpat_vec_ino -C vec_ino -f $(MCPAT_MK)
 
 _mcpat_vec_ino:
 	ln -sf $(CFG_VEC_INO_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec_ooo # VEC_OOO execution and extract parts
 	tr -d '\r' < sim.stats.mcpat.output.filtered.csv > vec.csv
 
 
