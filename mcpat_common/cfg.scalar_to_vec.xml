@@ -35,6 +35,7 @@
     <macro name="UOP_GENERIC"   value="path:$(SC0)/rob_timer/uop_generic/@roi-length"/>
     <macro name="UOP_FP_ADDSUB" value="path:$(SC0)/rob_timer/uop_fp_addsub/@roi-length"/>
     <macro name="UOP_FP_MULDIV" value="path:$(SC0)/rob_timer/uop_fp_muldiv/@roi-length"/>
+    <macro name="VEC_SCALE"     value="1"/>
 
     <macro name="NUM_BR_OPS" value="path:$(SC0)/rob_timer/uop_branch/@roi-length" />
 

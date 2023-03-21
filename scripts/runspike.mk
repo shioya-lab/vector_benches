@@ -58,9 +58,12 @@ power: _power-ooo-v _power-vio-v _power-ino-v
 
 runsniper-v:
 	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-ino-v
-	cat ino.v.v$(VLEN)_d$(DLEN)/power.csv > power_v$(VLEN)_d$(DLEN).csv
+	cat     ino.v.v$(VLEN)_d$(DLEN)/power.csv >  power_v$(VLEN)_d$(DLEN).csv
 	tail +2 vio.v.v$(VLEN)_d$(DLEN)/power.csv >> power_v$(VLEN)_d$(DLEN).csv
 	tail +2 ooo.v.v$(VLEN)_d$(DLEN)/power.csv >> power_v$(VLEN)_d$(DLEN).csv
+	cat     ino.v.v$(VLEN)_d$(DLEN)/area.csv >  area_v$(VLEN)_d$(DLEN).csv
+	tail +2 vio.v.v$(VLEN)_d$(DLEN)/area.csv >> area_v$(VLEN)_d$(DLEN).csv
+	tail +2 ooo.v.v$(VLEN)_d$(DLEN)/area.csv >> area_v$(VLEN)_d$(DLEN).csv
 
 runsniper-s:
 	$(MAKE) runsniper-ooo-s runsniper-ino-s
@@ -138,6 +141,7 @@ _power-ooo-s:
 	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C ooo.s
 _power-ino-s:
 	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C ino.s
+
 
 sniper2mcpat:
 	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML)

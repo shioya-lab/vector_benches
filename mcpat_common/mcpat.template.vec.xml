@@ -9,7 +9,7 @@
   <macro name="COMMIT_WIDTH" value="4"/>
 
   <macro name="ISSUE_WIDTH" value="4"/>
-  <macro name="FP_ISSUE_WIDTH" value="1"/>
+  <macro name="FP_ISSUE_WIDTH" value="2"/>
   <macro name="INT_ISSUE_WIDTH" value="2"/>
   <!-- macro name="MEM_ISSUE_WIDTH" value="$(MEM_ISSUE_WIDTH)"/ -->
 
@@ -92,8 +92,8 @@
     value="path:$(SC0)/rob_timer/uop_branch/@roi-length"
     / -->
   <macro name="NUM_FP_OPS" value="op:add">
-    <source value="$(UOP_FP_ADDSUB)"/>
-    <source value="$(UOP_FP_MULDIV)"/>
+    <source value="$(UOP_FP_ADDSUB)" scale="$(VEC_SCALE)"/>
+    <source value="$(UOP_FP_MULDIV)" scale="$(VEC_SCALE)"/>
   </macro>
   <!-- OoO に関わる部分 -->
   <macro name="NUM_ROB_READS" value="op:add">
@@ -205,7 +205,7 @@
       <!-- contains an adder, a shifter, and a logical unit -->
       <param name="MUL_per_core" value="1"/>
       <!-- For MUL and Div -->
-      <param name="FPU_per_core" value="$(FP_ISSUE_WIDTH)"/>
+      <param name="FPU_per_core" value="$(FPU_per_core)"/>
       <!-- buffer between IF and ID stage -->
       <param name="instruction_buffer_size" value="16"/><!--Inst. + micro-op -->
       <!-- buffer between ID and sche/exe stage -->
