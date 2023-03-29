@@ -146,7 +146,7 @@
 
       <!-- Additional parameters -->
       <param name="ALU_use_base_energy" value="0"/>  <!--<param name="ALU_per_access_energy" value="0.02225e-9"/>-->
-      <param name="FRF_read_ports" value="$(FP_ISSUE_WIDTH)" scale="2"/>
+      <param name="FRF_read_ports" value="$(FP_ISSUE_WIDTH)" scale="$(FP_REG_PORTS)"/>
       <param name="FRF_write_ports" value="$(FP_ISSUE_WIDTH)"/>
       <param name="inst_window_double_pumped" value="0"/>
       <param name="instruction_buffer_reads" value="$(NUM_FETCHED_GROUP)"/>

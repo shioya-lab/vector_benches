@@ -21,6 +21,7 @@
     <macro name="FP_PRF_SIZE"  value="32"/>
 
     <macro name="FP_WIDTH" value="512"/>
+    <macro name="FP_REG_PORTS" value="3"/>
     <macro name="INORDER" value="0"/>   <!-- InO config but OoO, to extract elements -->
     <macro name="LQ_SIZE" value="32"/>
     <macro name="SQ_SIZE" value="32"/>

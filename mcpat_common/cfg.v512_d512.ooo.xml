@@ -21,6 +21,9 @@
     <macro name="FP_PRF_SIZE"  value="128"/>
 
     <macro name="FP_WIDTH" value="512"/>
+    <macro name="FP_REG_PORTS" value="3"/>
+    <macro name="FPU_per_core"  value="8"/>
+
     <macro name="INORDER" value="0"/>
     <macro name="LQ_SIZE" value="32"/>
     <macro name="SQ_SIZE" value="32"/>
@@ -30,8 +33,6 @@
     <macro name="NUM_STORES"       value="path:$(SC0)/L1-D/vec_stores/@roi-length"/>
     <macro name="NUM_LOAD_MISSES"  value="path:$(SC0)/L1-D/vec_load-misses/@roi-length"/>
     <macro name="NUM_STORE_MISSES" value="path:$(SC0)/L1-D/vec_store-misses/@roi-length"/>
-
-    <macro name="FPU_per_core"  value="8"/>
 
     <macro name="UOP_LOAD"      value="0"/>
     <macro name="UOP_STORE"     value="0"/>

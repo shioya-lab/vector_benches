@@ -21,6 +21,8 @@
     <macro name="FP_PRF_SIZE"  value="32"/>
 
     <macro name="FP_WIDTH" value="64"/>
+    <macro name="FP_REG_PORTS" value="2"/>
+    <macro name="FPU_per_core"  value="2"/>
     <macro name="INORDER" value="1"/>
     <macro name="LQ_SIZE" value="32"/> <!-- Vector LSQ -->
     <macro name="SQ_SIZE" value="32"/> <!-- Vector LSQ -->
