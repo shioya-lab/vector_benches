@@ -29,7 +29,7 @@ endif
 .PHONY: build vector scalar
 .PHONY: runspike-s runspike-v
 .PHONY: runsniper runsniper-v runsniper-s
-.PHONY: runsniper-ooo-v runsniper-vio-v runsniper-ino-v
+.PHONY: runsniper-ooo-v runsniper-vio-v runsniper-vio-fence-v runsniper-ino-v
 .PHONY: runsniper-ooo-s runsniper-ino-s
 
 build:
@@ -57,7 +57,15 @@ power: _power-ooo-v _power-vio-v _power-ino-v
 
 
 runsniper-v:
-	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-ino-v
+	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-vio-fence-v runsniper-ino-v
+	xzgrep "cycles = " spike-s.log.xz | sed 's/cycles = //g'           | xargs echo -n >  perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
+	paste ino.s/cycle ooo.s/cycle                                      | xargs echo -n >> perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
+	xzgrep "cycles = " spike-v.$(VLEN).log.xz | sed 's/cycles = //g'   | xargs echo -n >> perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
+	xzgrep "vecinst = " spike-v.$(VLEN).log.xz | sed 's/vecinst = //g' | xargs echo -n >> perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
+	paste ino.v.v$(VLEN)_d$(DLEN)/cycle \
+		  vio.v.fence.v$(VLEN)_d$(DLEN)/cycle \
+		  vio.v.v$(VLEN)_d$(DLEN)/cycle \
+		  ooo.v.v$(VLEN)_d$(DLEN)/cycle >> perf_v$(VLEN)_d$(DLEN).csv
 	cat     ino.v.v$(VLEN)_d$(DLEN)/power.csv >  power_v$(VLEN)_d$(DLEN).csv
 	tail +2 vio.v.v$(VLEN)_d$(DLEN)/power.csv >> power_v$(VLEN)_d$(DLEN).csv
 	tail +2 ooo.v.v$(VLEN)_d$(DLEN)/power.csv >> power_v$(VLEN)_d$(DLEN).csv
@@ -112,10 +120,16 @@ runsniper-vio-v: $(rvv_sift)
 	$(MAKE) execute-sniper      -C vio.v.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=vio APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
 	$(MAKE) execute-mcpat-vio-v -C vio.v.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
 
+# Vector to Scalar, Insert InOrder
+runsniper-vio-fence-v: $(rvv_sift)
+	mkdir -p vio.v.fence.v$(VLEN)_d$(DLEN)
+	$(MAKE) execute-sniper      -C vio.v.fence.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=vio-fence APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+	$(MAKE) execute-mcpat-vio-v -C vio.v.fence.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
+
 # Non-Gather-Scatter Merge
 runsniper-vio-ngs-v: $(rvv_sift)
 	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-sniper      -C vio.v.ngs.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=vio APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+	$(MAKE) execute-sniper      -C vio.v.ngs.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=vio-ngs APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
 	$(MAKE) execute-mcpat-vio-v -C vio.v.ngs.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
 
 
