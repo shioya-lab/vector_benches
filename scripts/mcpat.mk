@@ -11,6 +11,7 @@ CFG_SCALAR_OOO_XML  	   = $(realpath ../../mcpat_common/cfg.scalar.ooo.xml      
 CFG_SCALAR_INO_XML  	   = $(realpath ../../mcpat_common/cfg.scalar.ino.xml        ../../../mcpat_common/cfg.scalar.ino.xml     	 ../../../../mcpat_common/cfg.scalar.ino.xml)
 CFG_SCALAR_TO_VEC_OOO_XML  = $(realpath ../../mcpat_common/cfg.scalar_to_vec.xml     ../../../mcpat_common/cfg.scalar_to_vec.xml  	 ../../../../mcpat_common/cfg.scalar_to_vec.xml)
 CFG_VEC_TO_SCALAR_XML      = $(realpath ../../mcpat_common/cfg.vec_to_scalar.xml     ../../../mcpat_common/cfg.vec_to_scalar.xml     ../../../../mcpat_common/cfg.vec_to_scalar.xml)
+CFG_V_TO_S_NGS_XML         = $(realpath ../../mcpat_common/cfg.v_to_s.ngs.xml        ../../../mcpat_common/cfg.v_to_s.ngs.xml        ../../../../mcpat_common/cfg.v_to_s.ngs.xml)
 CFG_TEST_XML      = $(realpath ../../mcpat_common/cfg.test.xml     ../../../mcpat_common/cfg.test.xml     ../../../../mcpat_common/cfg.test.xml)
 
 execute-mcpat-ooo-v: mcpat_scalar_ooo mcpat_scalar_ino mcpat_vec_ooo mcpat_vec_ino mcpat_scalar_to_vec mcpat_vec_to_scalar
@@ -20,9 +21,6 @@ execute-mcpat-ooo-v: mcpat_scalar_ooo mcpat_scalar_ino mcpat_vec_ooo mcpat_vec_i
 	paste scalar_ooo/scalar.area.csv scalar_ino/scalar.area.csv vec_ooo/vec.area.csv vec_ino/vec.area.csv  vec_to_scalar/vec_to_scalar.area.csv scalar_to_vec/scalar_to_vec.area.csv | \
 		sed 's/sim.stats.mcpat.output.txt//g' | \
 		sed 's/^/$(APP_NAME)-OoO-V,$(shell cat cycle)/g' > area.csv
-
-# execute-mcpat-ooo-v: mcpat_test_64 mcpat_test_128 mcpat_test_192 mcpat_test_256 mcpat_test_320 mcpat_test_384 mcpat_test_448 mcpat_test_512
-
 
 mcpat_test_%:
 	mkdir -p $@
@@ -36,6 +34,22 @@ _mcpat_test_%:
 
 execute-mcpat-vio-v: mcpat_scalar_ooo mcpat_scalar_ino mcpat_vec_ooo mcpat_vec_ino mcpat_scalar_to_vec mcpat_vec_to_scalar
 	paste scalar_ooo/scalar.csv scalar_ino/scalar.csv vec_ooo/vec.csv vec_ino/vec.csv  vec_to_scalar/vec_to_scalar.csv scalar_to_vec/scalar_to_vec.csv | \
+		sed 's/sim.stats.mcpat.output.txt//g' | \
+		sed 's/^/$(APP_NAME)-VIO-V,$(shell cat cycle)/g' > power.csv
+	paste scalar_ooo/scalar.area.csv scalar_ino/scalar.area.csv vec_ooo/vec.area.csv vec_ino/vec.area.csv  vec_to_scalar/vec_to_scalar.area.csv scalar_to_vec/scalar_to_vec.area.csv | \
+		sed 's/sim.stats.mcpat.output.txt//g' | \
+		sed 's/^/$(APP_NAME)-VIO-V,$(shell cat cycle)/g' > area.csv
+
+execute-mcpat-vio-fence-v: mcpat_scalar_ooo mcpat_scalar_ino mcpat_vec_ooo mcpat_vec_ino mcpat_scalar_to_vec mcpat_vec_to_scalar
+	paste scalar_ooo/scalar.csv scalar_ino/scalar.csv vec_ooo/vec.csv vec_ino/vec.csv  vec_to_scalar/vec_to_scalar.csv scalar_to_vec/scalar_to_vec.csv | \
+		sed 's/sim.stats.mcpat.output.txt//g' | \
+		sed 's/^/$(APP_NAME)-VIO-V,$(shell cat cycle)/g' > power.csv
+	paste scalar_ooo/scalar.area.csv scalar_ino/scalar.area.csv vec_ooo/vec.area.csv vec_ino/vec.area.csv  vec_to_scalar/vec_to_scalar.area.csv scalar_to_vec/scalar_to_vec.area.csv | \
+		sed 's/sim.stats.mcpat.output.txt//g' | \
+		sed 's/^/$(APP_NAME)-VIO-V,$(shell cat cycle)/g' > area.csv
+
+execute-mcpat-vio-ngs-v: mcpat_scalar_ooo mcpat_scalar_ino mcpat_vec_ooo mcpat_vec_ino mcpat_scalar_to_vec mcpat_v_to_s_ngs
+	paste scalar_ooo/scalar.csv scalar_ino/scalar.csv vec_ooo/vec.csv vec_ino/vec.csv  v_to_s/vec_to_scalar.csv scalar_to_vec/scalar_to_vec.csv | \
 		sed 's/sim.stats.mcpat.output.txt//g' | \
 		sed 's/^/$(APP_NAME)-VIO-V,$(shell cat cycle)/g' > power.csv
 	paste scalar_ooo/scalar.area.csv scalar_ino/scalar.area.csv vec_ooo/vec.area.csv vec_ino/vec.area.csv  vec_to_scalar/vec_to_scalar.area.csv scalar_to_vec/scalar_to_vec.area.csv | \
@@ -134,3 +148,15 @@ _mcpat_vec_to_scalar:
 	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec_to_scalar
 	tr -d '\r' < sim.stats.mcpat.output.filtered.csv > vec_to_scalar.csv
 	tr -d '\r' < sim.stats.mcpat.output.area.csv > vec_to_scalar.area.csv
+
+
+mcpat_v_to_s_ngs:
+	mkdir -p v_to_s_ngs
+	$(MAKE) _mcpat_v_to_s_ngs -C v_to_s_ngs -f $(MCPAT_MK)
+
+_mcpat_v_to_s_ngs:
+	ln -sf $(CFG_V_TO_S_NGS_XML) cfg.xml
+	ln -sf ../sim.stats.sqlite3 .
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) v_to_s_ngs
+	tr -d '\r' < sim.stats.mcpat.output.filtered.csv > v_to_s_ngs.csv
+	tr -d '\r' < sim.stats.mcpat.output.area.csv > v_to_s_ngs.area.csv

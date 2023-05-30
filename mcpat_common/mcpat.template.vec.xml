@@ -5,28 +5,34 @@
   <!-- Parameters -->
   <macro name="TEMPERATURE" value="300"/> <!-- Kelvin -->
   <macro name="CLOCK" value="4000"/>
-  <macro name="FETCH_WIDTH" value="4"/>
-  <macro name="COMMIT_WIDTH" value="4"/>
+  <macro name="FETCH_WIDTH" value="8"/>
+  <macro name="COMMIT_WIDTH" value="10"/>
 
-  <macro name="ISSUE_WIDTH" value="4"/>
+  <macro name="ISSUE_WIDTH" value="10"/>
   <macro name="FP_ISSUE_WIDTH" value="2"/>
   <macro name="INT_ISSUE_WIDTH" value="2"/>
   <!-- macro name="MEM_ISSUE_WIDTH" value="$(MEM_ISSUE_WIDTH)"/ -->
 
-  <macro name="ISSUE_QUEUE_SIZE" value="36"/>
-  <macro name="ROB_SIZE" value="128"/>
+  <macro name="ISSUE_QUEUE_SIZE" value="88"/> <!-- INT=64/Scalar LSU 24 -->
+  <macro name="ROB_SIZE" value="160"/>
   <!-- macro name="LQ_SIZE" value="$(LQ_SIZE)"/ -->
   <!-- macro name="SQ_SIZE" value="$(SQ_SIZE)"/ -->
 
   <macro name="L1I_SIZE" value="32"/>  <!-- KB -->
-  <macro name="L1I_WAY" value="4"/>   <!-- KB -->
+  <macro name="L1I_WAY" value="8"/>   <!-- KB -->
   <macro name="L1D_SIZE" value="32"/>
   <macro name="L1D_WAY" value="8"/>
-  <macro name="L2_SIZE" value="256"/>
+  <macro name="L2_SIZE" value="512"/>
   <macro name="L2_WAY" value="8"/>
   <macro name="L3_SIZE" value="2048"/>
   <macro name="L3_WAY" value="16"/>
 
+  <macro name="NUM_FP_RENAME" value="op:add">
+    <source value="$(UOP_LOAD)" scale="$(VEC_ENABLE)" />
+    <source value="$(UOP_STORE)" scale="$(VEC_ENABLE)"/>
+    <source value="$(UOP_FP_ADDSUB)"/>
+    <source value="$(UOP_FP_MULDIV)"/>
+  </macro>
 
   <!-- Stats
     TODO:
@@ -109,10 +115,10 @@
     <source value="$(NUM_INT_OPS)"/>
   </macro>
   <macro name="NUM_FP_RENAME_READS" value="op:add">
-    <source value="$(NUM_FP_OPS)" scale="2"/>
+    <source value="$(NUM_FP_RENAME)" scale="$(RENAME_PORTS)"/>
   </macro>
   <macro name="NUM_FP_RENAME_WRITES" value="op:add">
-    <source value="$(NUM_FP_OPS)"/>
+    <source value="$(NUM_FP_RENAME)"/>
   </macro>
   <macro name="NUM_LSQ_LOAD_ACCESSES" value="op:add">
     <source value="$(NUM_LOADS)"/>
@@ -213,7 +219,7 @@
       <param name="instruction_window_scheme" value="0"/><!-- 0 PHYREG based, 1 RSBASED-->
       <!-- McPAT support 2 types of OoO cores, RS based and physical reg based-->
       <param name="instruction_window_size" value="$(ISSUE_QUEUE_SIZE)"/>
-      <param name="fp_instruction_window_size" value="32"/>
+      <param name="fp_instruction_window_size" value="$(FP_ISSUE_QUEUE_SIZE)"/>
       <!-- the instruction issue Q as in Alpha 21264; The RS as in Intel P6 -->
       <param name="ROB_size" value="$(ROB_SIZE)"/>
       <!-- each in-flight instruction has an entry in ROB -->
@@ -378,7 +384,7 @@
         -->
         <param name="icache_config" value="op:enum">
           <source scale="1024" value="$(L1I_SIZE)"/>
-          <source value="64"/>
+          <source value="32"/>
           <source value="$(L1I_WAY)"/>
           <source value="1"/>
           <source value="2"/>
@@ -410,9 +416,9 @@
               <!-- all the buffer related are optional -->
         <param name="dcache_config" value="op:enum">
           <source scale="1024" value="$(L1D_SIZE)"/>  <!-- Size -->
-          <source value="64"/>                        <!-- CacheLine -->
+          <source value="32"/>                        <!-- CacheLine -->
           <source value="$(L1D_WAY)"/>                <!-- Way -->
-          <source value="1"/>                         <!-- Bank -->
+          <source value="4"/>                         <!-- Bank -->
           <source value="2"/>                         <!-- Throughput -->
           <source value="2"/>                         <!-- Latency -->
           <source value="32"/>                        <!-- -->
@@ -724,7 +730,8 @@
     <param name="interconnect_projection_type" value="0"/><!--0: aggressive wire technology; 1: conservative wire technology -->
     <param name="device_type" value="0"/><!--0: HP(High Performance Type); 1: LSTP(Low standby power) 2: LOP (Low Operating Power)  -->
     <param name="longer_channel_device" value="1"/><!-- 0 no use; 1 use when appropriate -->
-    <param name="machine_bits" value="$(FP_WIDTH)"/>
+    <!-- param name="machine_bits" value="$(FP_WIDTH)"/ -->
+    <param name="machine_bits" value="64"/>
     <param name="fp_reg_width" value="$(FP_WIDTH)"/>
     <param name="virtual_address_width" value="64"/>
     <param name="physical_address_width" value="52"/>
