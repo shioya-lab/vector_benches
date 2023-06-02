@@ -31,7 +31,7 @@ endif
 .PHONY: build vector scalar
 .PHONY: runspike-s runspike-v
 .PHONY: runsniper runsniper-v runsniper-s
-.PHONY: runsniper-ooo-v runsniper-vio-v runsniper-vio-fence-v runsniper-ino-v
+.PHONY: runsniper-ooo-v runsniper-vio-v runsniper-vio-fence-v runsniper-ino-v runsniper-lsu-inorder-v
 .PHONY: runsniper-ooo-s runsniper-ino-s
 
 build:
@@ -47,32 +47,18 @@ runsniper:
 	xzgrep "cycles = " spike-v.$(VLEN).log.xz | sed 's/cycles = //g'   | xargs echo -n >> perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
 	xzgrep "vecinst = " spike-v.$(VLEN).log.xz | sed 's/vecinst = //g' | xargs echo -n >> perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
 	paste ino.v.v$(VLEN)_d$(DLEN)/cycle \
-		  vio.v.ngs.v$(VLEN)_d$(DLEN)/cycle \
 		  vio.v.fence.v$(VLEN)_d$(DLEN)/cycle \
+		  vio.v.ngs.v$(VLEN)_d$(DLEN)/cycle \
+		  vio.v.lsu-inorder.v$(VLEN)_d$(DLEN)/cycle \
 		  vio.v.v$(VLEN)_d$(DLEN)/cycle \
 		  ooo.v.v$(VLEN)_d$(DLEN)/cycle >> perf_v$(VLEN)_d$(DLEN).csv
 
 runmcpat:
-	$(MAKE) runmcpat-ooo-v runmcpat-vio-v runmcpat-vio-fence-v runmcpat-vio-ngs-v runmcpat-ino-v
-
-# power: _power-ooo-v _power-vio-v _power-ino-v
-# 	echo -n "Application," > power.$(VLEN).filtered.csv
-# 	head -n1 ooo.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv >> power.$(VLEN).filtered.csv
-# 	if [ -d ino.s ]; then \
-# 		$(MAKE) _power-ino-s; \
-# 		echo -n $(APP_NAME)_ino_s_$(VLEN)"," >> power.$(VLEN).filtered.csv; tail -n+2 ino.s/sim.stats.mcpat.output.filtered.csv         >> power.$(VLEN).filtered.csv; \
-# 	fi
-# 	if [ -d ooo.s ]; then \
-# 		$(MAKE) _power-ooo-s; \
-# 		echo -n $(APP_NAME)_ooo_s_$(VLEN)"," >> power.$(VLEN).filtered.csv; tail -n+2 ooo.s/sim.stats.mcpat.output.filtered.csv         >> power.$(VLEN).filtered.csv; \
-# 	fi
-# 	echo -n $(APP_NAME)_ino_v_$(VLEN)"," >> power.$(VLEN).filtered.csv; tail -n+2 ino.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv >> power.$(VLEN).filtered.csv
-# 	echo -n $(APP_NAME)_vio_v_$(VLEN)"," >> power.$(VLEN).filtered.csv; tail -n+2 vio.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv >> power.$(VLEN).filtered.csv
-# 	echo -n $(APP_NAME)_ooo_v_$(VLEN)"," >> power.$(VLEN).filtered.csv; tail -n+2 ooo.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv >> power.$(VLEN).filtered.csv
+	$(MAKE) runmcpat-ooo-v runmcpat-ino-v runmcpat-vio-v runmcpat-vio-fence-v runmcpat-vio-ngs-v  runmcpat-lsu-inorder-v 
 
 
 runsniper-v:
-	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-vio-fence-v runsniper-vio-ngs-v runsniper-ino-v
+	$(MAKE) runsniper-ooo-v runsniper-ino-v runsniper-vio-v runsniper-lsu-inorder-v runsniper-vio-fence-v runsniper-vio-ngs-v 
 
 runsniper-s:
 	$(MAKE) runsniper-ooo-s runsniper-ino-s
@@ -148,6 +134,14 @@ runmcpat-vio-ngs-v: $(rvv_sift)
 	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN)
 	$(MAKE) execute-mcpat-vio-ngs-v -C vio.v.ngs.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
 
+# Only LSU Inorder
+runsniper-lsu-inorder-v: $(rvv_sift)
+	mkdir -p vio.v.lsu-inorder.v$(VLEN)_d$(DLEN)
+	$(MAKE) execute-sniper      -C vio.v.lsu-inorder.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=lsu-inorder APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+
+runmcpat-lsu-inorder-v: $(rvv_sift)
+	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN)
+	$(MAKE) execute-mcpat-lsu-inorder-v -C vio.v.lsu-inorder.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
 
 runsniper-ooo-s: $(serial_sift)
 	mkdir -p ooo.s

@@ -3,7 +3,7 @@ RISCV_GCC ?= riscv$(XLEN)-unknown-elf-gcc
 RISCV_GCC_VEC_OPTS ?= \
 	-O2 \
 	-I/home/kimura/work/sniper/sniper-docker-env/sniper/include/ \
-	-march=rv64gv \
+	-march=rv64gcv \
 	-DPREALLOCATE=1 -mcmodel=medany \
 	-DUSE_RISCV_VECTOR
 
