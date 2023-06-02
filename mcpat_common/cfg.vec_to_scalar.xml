@@ -44,6 +44,8 @@
     <macro name="VEC_ENABLE"    value="1"/>
     <macro name="VEC_SCALE"     value="1"/>
 
+    <macro name="L1D_SIZE" value="32"/>
+
     <macro name="NUM_BR_OPS" value="0" />
 
     <macro name="RENAME_PORTS" value="4"/>

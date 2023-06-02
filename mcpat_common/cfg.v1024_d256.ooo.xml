@@ -17,14 +17,14 @@
   <Macros>
     <macro name="SC0" value="/stats/core-0"/>
 
-    <macro name="INT_PRF_SIZE" value="32"/>
-    <macro name="FP_PRF_SIZE"  value="32"/>
+    <macro name="INT_PRF_SIZE" value="208"/>
+    <macro name="FP_PRF_SIZE"  value="128"/>
 
     <macro name="FP_ISSUE_QUEUE_SIZE" value="32"/>
 
-    <macro name="FP_WIDTH" value="128"/>     <!-- Assume that 128-bits x 4: Multiply by 4 after McPAT -->
+    <macro name="FP_WIDTH" value="128"/>
     <macro name="FP_REG_PORTS" value="5"/>   <!-- 2-memory ports / 3-ALU ports -->
-    <macro name="INORDER" value="1"/>
+    <macro name="INORDER" value="0"/>
     <macro name="LQ_SIZE" value="64"/>
     <macro name="SQ_SIZE" value="64"/>
     <macro name="MEM_ISSUE_WIDTH" value="4"/>
@@ -34,7 +34,7 @@
     <macro name="NUM_LOAD_MISSES"  value="path:$(SC0)/L1-D/vec_load-misses/@roi-length"/>
     <macro name="NUM_STORE_MISSES" value="path:$(SC0)/L1-D/vec_store-misses/@roi-length"/>
 
-    <macro name="FPU_per_core"  value="8"/>
+    <macro name="FPU_per_core"  value="2"/>
 
     <macro name="UOP_LOAD"      value="path:$(SC0)/L1-D/vec_loads/@roi-length"/>
     <macro name="UOP_STORE"     value="path:$(SC0)/L1-D/vec_stores/@roi-length"/>
@@ -42,7 +42,7 @@
     <macro name="UOP_FP_ADDSUB" value="0"/>
     <macro name="UOP_FP_MULDIV" value="path:$(SC0)/rob_timer/uop_vec_arith/@roi-length"/>
     <macro name="VEC_ENABLE"    value="1"/>
-    <macro name="VEC_SCALE"     value="8"/>   <!-- VEC=512, 512/64=8 -> 8ops per 1-inst -->
+    <macro name="VEC_SCALE"     value="8"/>   <!-- VEC=1024, 1024/64=8 -> 8ops per 1-inst -->
 
     <macro name="L1D_SIZE" value="32"/>
 

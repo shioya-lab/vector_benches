@@ -20,7 +20,6 @@
 
   <macro name="L1I_SIZE" value="32"/>  <!-- KB -->
   <macro name="L1I_WAY" value="8"/>   <!-- KB -->
-  <macro name="L1D_SIZE" value="32"/>
   <macro name="L1D_WAY" value="8"/>
   <macro name="L2_SIZE" value="512"/>
   <macro name="L2_WAY" value="8"/>
@@ -418,10 +417,10 @@
           <source scale="1024" value="$(L1D_SIZE)"/>  <!-- Size -->
           <source value="32"/>                        <!-- CacheLine -->
           <source value="$(L1D_WAY)"/>                <!-- Way -->
-          <source value="4"/>                         <!-- Bank -->
+          <source value="2"/>                         <!-- Bank -->
           <source value="2"/>                         <!-- Throughput -->
           <source value="2"/>                         <!-- Latency -->
-          <source value="32"/>                        <!-- -->
+          <source value="32"/>                        <!-- Ouput Width-->
           <source value="1"/>                         <!-- Write Back=1, Write Through=0 -->
         </param>
         <param name="buffer_sizes" value="4, 4, 4, 4"/>

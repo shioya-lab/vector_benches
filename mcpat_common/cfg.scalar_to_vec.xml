@@ -42,6 +42,8 @@
     <macro name="VEC_ENABLE"    value="0"/>
     <macro name="VEC_SCALE"     value="1"/>
 
+    <macro name="L1D_SIZE" value="32"/>
+
     <macro name="NUM_BR_OPS" value="path:$(SC0)/rob_timer/uop_branch/@roi-length" />
 
     <macro name="MEM_ISSUE_WIDTH" value="2"/>
