@@ -12,7 +12,7 @@ PK ?= $(SYSROOT_DIR)/bin/pk
 rvv_target    ?= $(APP_NAME).vector
 serial_target ?= $(APP_NAME).scalar
 
-rvv_sift    ?= $(basename $(notdir $(rvv_target))).sift
+rvv_sift    ?= $(basename $(notdir $(rvv_target)))_v$(VLEN).sift
 serial_sift ?= $(basename $(notdir $(serial_target))).sift
 
 RUNSPIKE_MK  = $(realpath ../scripts/runspike.mk ../../scripts/runspike.mk)
@@ -145,7 +145,7 @@ runmcpat-lsu-inorder-v: $(rvv_sift)
 
 runsniper-ooo-s: $(serial_sift)
 	mkdir -p ooo.s
-	$(MAKE) execute-sniper      -C ooo.s -f $(SNIPER_MK) MODE=s-ooo APP_NAME=$(APP_NAME) SIFT=$(serial_sift)
+	$(MAKE) execute-sniper-s -C ooo.s -f $(SNIPER_MK) MODE=s-ooo APP_NAME=$(APP_NAME) SIFT=$(serial_sift)
 
 runmcpat-ooo-s: $(serial_sift)
 	mkdir -p ooo.s
@@ -154,7 +154,7 @@ runmcpat-ooo-s: $(serial_sift)
 
 runsniper-ino-s: $(serial_sift)
 	mkdir -p ino.s
-	$(MAKE) execute-sniper      -C ino.s -f $(SNIPER_MK) MODE=s-ino APP_NAME=$(APP_NAME) SIFT=$(serial_sift)
+	$(MAKE) execute-sniper-s   -C ino.s -f $(SNIPER_MK) MODE=s-ino APP_NAME=$(APP_NAME) SIFT=$(serial_sift)
 
 runmcpat-ino-s: $(serial_sift)
 	mkdir -p ino.s

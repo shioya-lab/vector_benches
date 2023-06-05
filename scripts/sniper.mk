@@ -58,4 +58,14 @@ execute-sniper:
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}' \
 		$(LOG_FILE).log > cycle
 	mv o3_trace.out $(LOG_FILE).konata
-	xz -f $(LOG_FILE).log &
+	xz -f $(LOG_FILE).log
+
+execute-sniper-s:
+	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --roi \
+		-v -c $(SNIPER_ROOT)/config/riscv-base.cfg \
+		-c $(SNIPER_ROOT)/config/$(SNIPER_CONFIG).v128_d128.cfg \
+		--traces=../$(SIFT) > $(LOG_FILE).log 2>&1
+	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}' \
+		$(LOG_FILE).log > cycle
+	mv o3_trace.out $(LOG_FILE).konata
+	xz -f $(LOG_FILE).log

@@ -43,7 +43,7 @@ mcpat_scalar_ooo:
 _mcpat_scalar_ooo:
 	ln -sf $(CFG_SCALAR_OOO_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ooo
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML)
 
 mcpat_scalar_ino:
 	mkdir -p scalar_ino
@@ -52,7 +52,7 @@ mcpat_scalar_ino:
 _mcpat_scalar_ino:
 	ln -sf $(CFG_SCALAR_INO_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_ino
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML)
 
 mcpat_vec_ooo:
 	mkdir -p vec_ooo
@@ -61,7 +61,7 @@ mcpat_vec_ooo:
 _mcpat_vec_ooo:
 	ln -sf $(CFG_VEC_OOO_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec_ooo
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) 
 
 
 mcpat_vec_ino:
@@ -71,7 +71,7 @@ mcpat_vec_ino:
 _mcpat_vec_ino:
 	ln -sf $(CFG_VEC_INO_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec_ino
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) 
 
 
 mcpat_scalar_to_vec:
@@ -81,7 +81,7 @@ mcpat_scalar_to_vec:
 _mcpat_scalar_to_vec:
 	ln -sf $(CFG_SCALAR_TO_VEC_OOO_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) scalar_to_vec
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) 
 
 mcpat_vec_to_scalar:
 	mkdir -p vec_to_scalar
@@ -90,7 +90,7 @@ mcpat_vec_to_scalar:
 _mcpat_vec_to_scalar:
 	ln -sf $(CFG_VEC_TO_SCALAR_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec_to_scalar
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) 
 
 
 mcpat_v_to_s_ngs:
@@ -100,7 +100,7 @@ mcpat_v_to_s_ngs:
 _mcpat_v_to_s_ngs:
 	ln -sf $(CFG_V_TO_S_NGS_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) v_to_s_ngs
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) 
 
 mcpat_dcache:
 	mkdir -p dcache
@@ -109,4 +109,4 @@ mcpat_dcache:
 _mcpat_dcache:
 	ln -sf $(CFG_DCACHE_XML) cfg.xml
 	ln -sf ../sim.stats.sqlite3 .
-	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) vec_ino
+	python3 $(SNIPER2MCPAT) sim.stats.sqlite3 $(MCPAT_TEMPLATE_XML) 

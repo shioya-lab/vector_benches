@@ -22,7 +22,7 @@
 
     <macro name="FP_ISSUE_QUEUE_SIZE" value="32"/>
 
-    <macro name="FP_WIDTH" value="256"/>
+    <macro name="FP_WIDTH" value="128"/>
     <macro name="FP_REG_PORTS" value="5"/>   <!-- 2-memory ports / 3-ALU ports -->
     <macro name="INORDER" value="0"/>
     <macro name="LQ_SIZE" value="64"/>
