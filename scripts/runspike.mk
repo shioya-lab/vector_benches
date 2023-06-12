@@ -42,10 +42,10 @@ build:
 
 runsniper:
 	$(MAKE) runsniper-v runsniper-s
-	xzgrep "cycles = " spike-s.log.xz | sed 's/cycles = //g'           | xargs echo -n >  perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
+	grep "cycles = " spike-s.log | sed 's/cycles = //g'           | xargs echo -n >  perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
 	paste ino.s/cycle ooo.s/cycle                                      | xargs echo -n >> perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
-	xzgrep "cycles = " spike-v.$(VLEN).log.xz | sed 's/cycles = //g'   | xargs echo -n >> perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
-	xzgrep "vecinst = " spike-v.$(VLEN).log.xz | sed 's/vecinst = //g' | xargs echo -n >> perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
+	grep "cycles = " spike-v.$(VLEN).log | sed 's/cycles = //g'   | xargs echo -n >> perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
+	grep "vecinst = " spike-v.$(VLEN).log | sed 's/vecinst = //g' | xargs echo -n >> perf_v$(VLEN)_d$(DLEN).csv; echo -n " " >> perf_v$(VLEN)_d$(DLEN).csv
 	paste ino.v.v$(VLEN)_d$(DLEN)/cycle \
 		  vio.v.fence.v$(VLEN)_d$(DLEN)/cycle \
 		  vio.v.ngs.v$(VLEN)_d$(DLEN)/cycle \
@@ -75,14 +75,12 @@ runspike-v : $(rvv_target)
 
 $(rvv_sift): $(rvv_target)
 	$(SPIKE) --isa=rv64gcv --varch=vlen:$(VLEN),elen:64 --sift $@ $(PK) $^ $(SPIKE_OPTS) > spike-v.$(VLEN).log 2>&1
-	xz -f spike-v.$(VLEN).log
 
 runspike-s : $(serial_target)
 	$(MAKE) $(serial_sift)
 
 $(serial_sift): $(serial_target)
 	$(SPIKE) --isa=rv64gc --varch=vlen:$(VLEN),elen:64 --sift $@ $(PK) $^ $(SPIKE_OPTS) > spike-s.log 2>&1
-	xz -f spike-s.log
 
 runspike-debug-v : $(rvv_target)
 	$(SPIKE) --isa=rv64gcv --varch=vlen:$(VLEN),elen:64 -l --log-commits --sift $(rvv_sift)    $(PK) $^ $(SPIKE_OPTS) > spike-v.$(VLEN).log 2>&1
