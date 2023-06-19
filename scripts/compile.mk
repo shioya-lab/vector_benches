@@ -39,7 +39,7 @@ serial_target ?= $(APP_NAME).scalar
 #--------------------------------------------------------------------
 
 RISCV_PREFIX ?= riscv$(XLEN)-unknown-elf-
-RISCV_GCC ?= clang-15
+RISCV_GCC ?= clang-16
 RISCV_GCC_VEC_OPTS ?= \
 	-O2 \
 	-I/work/sniper/sniper/sniper/include/ \

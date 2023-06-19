@@ -9,8 +9,8 @@ SPIKE = $(SPIKE_ROOT)/spike
 PK ?= $(SYSROOT_DIR)/bin/pk
 # PK = $(HOME)/riscv64/riscv64-unknown-elf/bin/pk
 
-rvv_target    ?= $(APP_NAME).vector
-serial_target ?= $(APP_NAME).scalar
+rvv_target    ?= bin/rvv-test
+serial_target ?= bin/serial-test
 
 rvv_sift    ?= $(basename $(notdir $(rvv_target)))_v$(VLEN).sift
 serial_sift ?= $(basename $(notdir $(serial_target))).sift

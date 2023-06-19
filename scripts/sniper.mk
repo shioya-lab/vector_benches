@@ -57,7 +57,12 @@ execute-sniper:
 		--traces=../$(SIFT) > $(LOG_FILE).log 2>&1
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}' \
 		$(LOG_FILE).log > cycle
-	mv o3_trace.out $(LOG_FILE).konata
+	if [ -e o3_trace.out ]; then\
+		mv -f o3_trace.out $(LOG_FILE).konata; gzip -f $(LOG_FILE).konata; \
+	fi
+	if [ -e kanata_trace.log ]; then\
+		mv -f kanata_trace.log $(LOG_FILE).kanata; gzip -f $(LOG_FILE).kanata; \
+	fi
 	xz -f $(LOG_FILE).log
 
 execute-sniper-s:
@@ -67,5 +72,10 @@ execute-sniper-s:
 		--traces=../$(SIFT) > $(LOG_FILE).log 2>&1
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}' \
 		$(LOG_FILE).log > cycle
-	mv o3_trace.out $(LOG_FILE).konata
+	if [ -e o3_trace.out ]; then\
+		mv -f o3_trace.out $(LOG_FILE).konata; gzip -f $(LOG_FILE).konata; \
+	fi
+	if [ -e kanata_trace.log ]; then\
+		mv -f kanata_trace.log $(LOG_FILE).kanata; gzip -f $(LOG_FILE).kanata; \
+	fi
 	xz -f $(LOG_FILE).log
