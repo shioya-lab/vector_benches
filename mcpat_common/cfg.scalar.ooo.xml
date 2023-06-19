@@ -28,8 +28,8 @@
     <macro name="LQ_SIZE" value="64"/>
     <macro name="SQ_SIZE" value="64"/>
 
-    <macro name="NUM_LOADS" value="path:$(SC0)/L1-D/loads/@roi-length"/>
-    <macro name="NUM_STORES" value="path:$(SC0)/L1-D/stores/@roi-length"/>
+    <macro name="NUM_LOADS" value="path:$(SC0)/L1-D/scalar_loads/@roi-length"/>
+    <macro name="NUM_STORES" value="path:$(SC0)/L1-D/scalar_stores/@roi-length"/>
     <macro name="NUM_LOAD_MISSES" value="path:$(SC0)/L1-D/load-misses/@roi-length"/>
     <macro name="NUM_STORE_MISSES" value="path:$(SC0)/L1-D/store-misses/@roi-length"/>
 
