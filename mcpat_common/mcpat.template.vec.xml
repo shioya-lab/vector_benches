@@ -4,8 +4,8 @@
 
   <!-- Parameters -->
   <macro name="TEMPERATURE" value="300"/> <!-- Kelvin -->
-  <macro name="CLOCK" value="4000"/>
-  <macro name="FETCH_WIDTH" value="8"/>
+  <macro name="CLOCK" value="2000"/>
+  <macro name="FETCH_WIDTH" value="4"/>
   <macro name="COMMIT_WIDTH" value="10"/>
 
   <macro name="ISSUE_WIDTH" value="10"/>
