@@ -41,6 +41,7 @@
     <macro name="UOP_GENERIC"   value="0"/>
     <macro name="UOP_FP_ADDSUB" value="0"/>
     <macro name="UOP_FP_MULDIV" value="path:$(SC0)/rob_timer/uop_vec_arith/@roi-length"/>
+    <macro name="UOP_FP_UOPS"   value="path:$(SC0)/rob_timer/vecuops_count/@roi-length"/>
     <macro name="VEC_ENABLE"    value="1"/>
     <macro name="VEC_SCALE"     value="32"/>   <!-- VEC=2048, 2048/64=32 -> 32ops per 1-inst -->
 

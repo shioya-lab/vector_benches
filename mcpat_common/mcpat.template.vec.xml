@@ -97,6 +97,10 @@
     value="path:$(SC0)/rob_timer/uop_branch/@roi-length"
     / -->
   <macro name="NUM_FP_OPS" value="op:add">
+    <source value="$(UOP_FP_ADDSUB)" scale="1"/>  <!-- "$(VEC_SCALE)"/ -->
+    <source value="$(UOP_FP_MULDIV)" scale="1"/>  <!-- "$(VEC_SCALE)"/ -->
+  </macro>
+  <macro name="NUM_FP_REGACC" value="op:add">
     <source value="$(UOP_FP_ADDSUB)" scale="$(VEC_SCALE)"/>
     <source value="$(UOP_FP_MULDIV)" scale="$(VEC_SCALE)"/>
   </macro>
@@ -137,7 +141,8 @@
     <source value="$(NUM_INT_OPS)" scale="1"/>
   </macro>
   <macro name="NUM_EXECED_FP_OPS" value="op:add">
-    <source value="$(NUM_FP_OPS)" scale="1"/>
+    <source value="$(UOP_FP_ADDSUB)" />
+    <source value="$(UOP_FP_UOPS)" />
   </macro>
 
   <macro name="NUM_ISSUED_INSNS" value="path:$(SC0)/performance_model/instruction_count/@roi-length"/>
@@ -269,7 +274,7 @@
 
       <stat name="committed_instructions" value="$(NUM_COMMITTED_INSNS)"/>
       <stat name="committed_int_instructions" value="$(NUM_COMMITTED_INSNS)"/>
-      <stat name="committed_fp_instructions" value="$(NUM_EXECED_FP_OPS)"/>
+      <stat name="committed_fp_instructions" value="$(NUM_FP_OPS)"/>
       <stat name="pipeline_duty_cycle" value="1"/><!--<=1, runtime_ipc/peak_ipc; averaged for all cores if homogenous -->
       <!-- the following cycle stats are used for heterogeneous cores only,
         please ignore them if homogeneous cores -->
@@ -298,9 +303,9 @@
       <stat name="fp_inst_window_wakeup_accesses" value="$(NUM_FP_OPS)" scale="2"/>
       <!--  RF accesses -->
       <stat name="int_regfile_reads" value="$(NUM_INT_RF_READS)" />
-      <stat name="float_regfile_reads" value="$(NUM_FP_OPS)" scale="2"/>
+      <stat name="float_regfile_reads" value="$(NUM_FP_REGACC)" scale="2"/>
       <stat name="int_regfile_writes" value="$(NUM_INT_RF_WRITES)" />
-      <stat name="float_regfile_writes" value="$(NUM_FP_OPS)" scale="1"/>
+      <stat name="float_regfile_writes" value="$(NUM_FP_REGACC)" scale="1"/>
       <!-- accesses to the working reg -->
       <stat name="function_calls" value="$(NUM_BR_OPS)" scale="0.25"/>
       <stat name="context_switches" value="0"/>
