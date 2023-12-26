@@ -54,11 +54,11 @@ runsniper:
 		  ooo.v.v$(VLEN)_d$(DLEN)/cycle >> perf_v$(VLEN)_d$(DLEN).csv
 
 runmcpat:
-	$(MAKE) runmcpat-ooo-v runmcpat-ino-v runmcpat-vio-v runmcpat-vio-fence-v runmcpat-vio-ngs-v  runmcpat-lsu-inorder-v 
+	$(MAKE) runmcpat-ooo-v runmcpat-ino-v runmcpat-vio-v runmcpat-vio-fence-v runmcpat-vio-ngs-v  runmcpat-lsu-inorder-v
 
 
 runsniper-v:
-	$(MAKE) runsniper-ooo-v runsniper-ino-v runsniper-vio-v runsniper-lsu-inorder-v runsniper-vio-fence-v runsniper-vio-ngs-v 
+	$(MAKE) runsniper-ooo-v runsniper-ino-v runsniper-vio-v runsniper-lsu-inorder-v runsniper-vio-fence-v runsniper-vio-ngs-v
 
 runsniper-s:
 	$(MAKE) runsniper-ooo-s runsniper-ino-s
@@ -91,83 +91,107 @@ runspike-debug-s : $(serial_target)
 
 
 runsniper-ooo-v: $(rvv_sift)
-	mkdir -p ooo.v.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-sniper      -C ooo.v.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=ooo APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+	mkdir -p ooo.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C ooo.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=ooo APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
 
 runmcpat-ooo-v:
-	mkdir -p ooo.v.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-mcpat-ooo-v -C ooo.v.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
+	mkdir -p ooo.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-mcpat-ooo-v -C ooo.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) APP_NAME=$(APP_NAME)
 
 runsniper-ino-v: $(rvv_sift)
-	mkdir -p ino.v.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-sniper      -C ino.v.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=ino APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+	mkdir -p ino.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C ino.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=ino APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
 
 runmcpat-ino-v:
-	mkdir -p ino.v.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-mcpat-ino-v -C ino.v.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
+	mkdir -p ino.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-mcpat-ino-v -C ino.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) APP_NAME=$(APP_NAME)
 
 runsniper-vio-v: $(rvv_sift)
-	mkdir -p vio.v.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-sniper      -C vio.v.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=vio APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+	mkdir -p vio.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C vio.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=vio APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+
+runsniper-none-pref-v: $(rvv_sift)
+	mkdir -p none-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C none-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=none-pref APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+
+runsniper-simple-pref-v: $(rvv_sift)
+	mkdir -p simple-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C simple-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=simple-pref APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+
+runsniper-stream-pref-v: $(rvv_sift)
+	mkdir -p stream-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C stream-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=stream-pref APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+
+runsniper-stride-pref-v: $(rvv_sift)
+	mkdir -p stride-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C stride-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=stride-pref APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+
+runsniper-vec-pref-v: $(rvv_sift)
+	mkdir -p vec-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C vec-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=vec-pref APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+
+runsniper-oracle-pref-v: $(rvv_sift)
+	mkdir -p oracle-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C oracle-pref.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=oracle-pref APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
 
 runmcpat-vio-v:
-	mkdir -p vio.v.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-mcpat-vio-v -C vio.v.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
+	mkdir -p vio.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-mcpat-vio-v -C vio.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) APP_NAME=$(APP_NAME)
 
 # Vector to Scalar, Insert InOrder
 runsniper-vio-fence-v: $(rvv_sift)
-	mkdir -p vio.v.fence.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-sniper      -C vio.v.fence.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=vio-fence APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+	mkdir -p vio.v.fence.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C vio.v.fence.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=vio-fence APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
 
 runmcpat-vio-fence-v: $(rvv_sift)
-	mkdir -p vio.v.fence.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-mcpat-vio-fence-v -C vio.v.fence.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
+	mkdir -p vio.v.fence.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-mcpat-vio-fence-v -C vio.v.fence.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) APP_NAME=$(APP_NAME)
 
 # Non-Gather-Scatter Merge
 runsniper-vio-ngs-v: $(rvv_sift)
-	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-sniper      -C vio.v.ngs.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=vio-ngs APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C vio.v.ngs.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=vio-ngs APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
 
 runmcpat-vio-ngs-v: $(rvv_sift)
-	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-mcpat-vio-ngs-v -C vio.v.ngs.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
+	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-mcpat-vio-ngs-v -C vio.v.ngs.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) APP_NAME=$(APP_NAME)
 
 # Only LSU Inorder
 runsniper-lsu-inorder-v: $(rvv_sift)
-	mkdir -p vio.v.lsu-inorder.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-sniper      -C vio.v.lsu-inorder.v$(VLEN)_d$(DLEN) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) MODE=lsu-inorder APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
+	mkdir -p vio.v.lsu-inorder.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper      -C vio.v.lsu-inorder.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) MODE=lsu-inorder APP_NAME=$(APP_NAME) SIFT=$(rvv_sift)
 
 runmcpat-lsu-inorder-v: $(rvv_sift)
-	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN)
-	$(MAKE) execute-mcpat-lsu-inorder-v -C vio.v.lsu-inorder.v$(VLEN)_d$(DLEN) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) APP_NAME=$(APP_NAME)
+	mkdir -p vio.v.ngs.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-mcpat-lsu-inorder-v -C vio.v.lsu-inorder.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY) -f $(MCPAT_MK)  VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) APP_NAME=$(APP_NAME)
 
 runsniper-ooo-s: $(serial_sift)
-	mkdir -p ooo.s
-	$(MAKE) execute-sniper-s -C ooo.s -f $(SNIPER_MK) MODE=s-ooo APP_NAME=$(APP_NAME) SIFT=$(serial_sift)
+	mkdir -p ooo.s.v512_d128_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper-s -C ooo.s.v512_d128_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) MODE=s-ooo VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) APP_NAME=$(APP_NAME) SIFT=$(serial_sift)
 
 runmcpat-ooo-s: $(serial_sift)
-	mkdir -p ooo.s
-	$(MAKE) execute-mcpat-ooo-s -C ooo.s -f $(MCPAT_MK) APP_NAME=$(APP_NAME)
+	mkdir -p ooo.s.v512_d128_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-mcpat-ooo-s -C ooo.s.v512_d128_$(L2PREF)_$(L1PREF_POLICY) -f $(MCPAT_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) APP_NAME=$(APP_NAME)
 
 
 runsniper-ino-s: $(serial_sift)
-	mkdir -p ino.s
-	$(MAKE) execute-sniper-s   -C ino.s -f $(SNIPER_MK) MODE=s-ino APP_NAME=$(APP_NAME) SIFT=$(serial_sift)
+	mkdir -p ino.s.v512_d128_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-sniper-s   -C ino.s.v512_d128_$(L2PREF)_$(L1PREF_POLICY) -f $(SNIPER_MK) MODE=s-ino VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) APP_NAME=$(APP_NAME) SIFT=$(serial_sift)
 
 runmcpat-ino-s: $(serial_sift)
-	mkdir -p ino.s
-	$(MAKE) execute-mcpat-ino-s -C ino.s -f $(MCPAT_MK) APP_NAME=$(APP_NAME)
+	mkdir -p ino.s.v512_d128_$(L2PREF)_$(L1PREF_POLICY)
+	$(MAKE) execute-mcpat-ino-s -C ino.s.v512_d128_$(L2PREF)_$(L1PREF_POLICY) -f $(MCPAT_MK) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) APP_NAME=$(APP_NAME)
 
 _power-ooo-v:
-	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C ooo.v.v$(VLEN)_d$(DLEN)
+	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) -C ooo.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
 _power-vio-v:
-	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C vio.v.v$(VLEN)_d$(DLEN)
+	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) -C vio.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
 _power-ino-v:
-	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C ino.v.v$(VLEN)_d$(DLEN)
+	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) -C ino.v.v$(VLEN)_d$(DLEN)_$(L2PREF)_$(L1PREF_POLICY)
 _power-ooo-s:
-	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C ooo.s
+	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) -C ooo.s
 _power-ino-s:
-	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) -C ino.s
+	$(MAKE) -f $(RUNSPIKE_MK) sniper2mcpat APP_NAME=$(APP_NAME) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) -C ino.s
 
 
 sniper2mcpat:
@@ -181,6 +205,7 @@ clean:
 	rm -rf ino.v.*
 	rm -rf ooo.v.*
 	rm -rf vio.v.*
+	rm -rf *-pref.v.*
 	rm -rf *.sift
 	rm -rf *.log
 	rm -rf bin/*
