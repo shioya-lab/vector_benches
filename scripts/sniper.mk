@@ -78,60 +78,90 @@ ifeq ($(MODE),oracle-pref)
 	MODE = vio
 	LOG_FILE = $(basename $(notdir $(rvv_target))).$(MODE).v.v$(VLEN)_d$(DLEN)
 endif # ($(MODE),ooo)
-ifeq ($(L2PREF),l2_none)
-	L2PREF_CFG = l2_none
-endif # ($(MODE),ooo)
-ifeq ($(L2PREF),l2_stream)
-	L2PREF_CFG = l2_stream
-endif # ($(MODE),ooo)
-ifeq ($(L2PREF),l2_oracle)
-	L2PREF_CFG = l2_oracle
-endif # ($(MODE),ooo)
 
-ifeq ($(L1PREF_POLICY),l1d_pref_load)
-	L1PREF_POLICY_CFG = l1d_pref_load
-endif # ($(L1PREF_POLICY),l1pref_load)
-ifeq ($(L1PREF_POLICY),l1d_pref_keep)
-	L1PREF_POLICY_CFG = l1d_pref_keep
-endif # ($(L1PREF_POLICY),l1pref_keep)
-
-
-
+# ifeq ($(L2PREF),l2_none)
+# 	L2PREF_CFG = l2_none
+# endif # ($(MODE),ooo)
+# ifeq ($(L2PREF),l2_stream)
+# 	L2PREF_CFG = l2_stream
+# endif # ($(MODE),ooo)
+# ifeq ($(L2PREF),l2_oracle)
+# 	L2PREF_CFG = l2_oracle
+# endif # ($(MODE),ooo)
+#
+# ifeq ($(L1PREF_POLICY),l1d_pref_load)
+# 	L1PREF_POLICY_CFG = l1d_pref_load
+# endif # ($(L1PREF_POLICY),l1pref_load)
+# ifeq ($(L1PREF_POLICY),l1d_pref_keep)
+# 	L1PREF_POLICY_CFG = l1d_pref_keep
+# endif # ($(L1PREF_POLICY),l1pref_keep)
 
 execute-sniper:
 	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --roi \
 		-v -c $(SNIPER_ROOT)/config/riscv-base.cfg \
 		-c $(SNIPER_ROOT)/config/$(SNIPER_CONFIG).v$(VLEN)_d$(DLEN).cfg \
-		-c $(SNIPER_ROOT)/config/$(L2PREF_CFG).cfg \
-		-c $(SNIPER_ROOT)/config/$(L1PREF_POLICY_CFG).cfg \
-		--traces=../$(SIFT) > $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log 2>&1
+		--traces=../$(SIFT) > $(LOG_FILE).log 2>&1
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}' \
-		$(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log > cycle
+		$(LOG_FILE).log > cycle
 	if [ -e o3_trace.out ]; then\
-		mv -f o3_trace.out $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).konata; gzip -f $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).konata; \
+		mv -f o3_trace.out $(LOG_FILE).konata; gzip -f $(LOG_FILE).konata; \
 	fi
 	if [ -e kanata_trace.log ]; then\
 		mv -f kanata_trace.log $(LOG_FILE).kanata; gzip -f $(LOG_FILE).kanata; \
 	fi
-	python3 ../../../scripts/dump_sqlite3.py ./sim.stats.sqlite3
-	xz -f $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log
-
-
+	xz -f $(LOG_FILE).log
 
 execute-sniper-s:
 	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --roi \
 		-v -c $(SNIPER_ROOT)/config/riscv-base.cfg \
 		-c $(SNIPER_ROOT)/config/$(SNIPER_CONFIG).v128_d128.cfg \
-		-c $(SNIPER_ROOT)/config/$(L2PREF_CFG).cfg \
-		-c $(SNIPER_ROOT)/config/$(L1PREF_POLICY_CFG).cfg \
-		--traces=../$(SIFT) > $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log 2>&1
+		--traces=../$(SIFT) > $(LOG_FILE).log 2>&1
 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}' \
-		$(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log > cycle
+		$(LOG_FILE).log > cycle
 	if [ -e o3_trace.out ]; then\
-		mv -f o3_trace.out $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).konata; gzip -f $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).konata; \
+		mv -f o3_trace.out $(LOG_FILE).konata; gzip -f $(LOG_FILE).konata; \
 	fi
 	if [ -e kanata_trace.log ]; then\
-		mv -f kanata_trace.log $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).kanata; gzip -f $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).kanata; \
+		mv -f kanata_trace.log $(LOG_FILE).kanata; gzip -f $(LOG_FILE).kanata; \
 	fi
-	python3 ../../../scripts/dump_sqlite3.py ./sim.stats.sqlite3
-	xz -f $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log
+	xz -f $(LOG_FILE).log
+
+
+
+# execute-sniper:
+# 	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --roi \
+# 		-v -c $(SNIPER_ROOT)/config/riscv-base.cfg \
+# 		-c $(SNIPER_ROOT)/config/$(SNIPER_CONFIG).v$(VLEN)_d$(DLEN).cfg \
+# 		-c $(SNIPER_ROOT)/config/$(L2PREF_CFG).cfg \
+# 		-c $(SNIPER_ROOT)/config/$(L1PREF_POLICY_CFG).cfg \
+# 		--traces=../$(SIFT) > $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log 2>&1
+# 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}' \
+# 		$(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log > cycle
+# 	if [ -e o3_trace.out ]; then\
+# 		mv -f o3_trace.out $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).konata; gzip -f $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).konata; \
+# 	fi
+# 	if [ -e kanata_trace.log ]; then\
+# 		mv -f kanata_trace.log $(LOG_FILE).kanata; gzip -f $(LOG_FILE).kanata; \
+# 	fi
+# 	python3 ../../../scripts/dump_sqlite3.py ./sim.stats.sqlite3
+# 	xz -f $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log
+#
+#
+#
+# execute-sniper-s:
+# 	$(SNIPER_ROOT)/run-sniper $(SNIPER_DEBUG) --roi \
+# 		-v -c $(SNIPER_ROOT)/config/riscv-base.cfg \
+# 		-c $(SNIPER_ROOT)/config/$(SNIPER_CONFIG).v128_d128.cfg \
+# 		-c $(SNIPER_ROOT)/config/$(L2PREF_CFG).cfg \
+# 		-c $(SNIPER_ROOT)/config/$(L1PREF_POLICY_CFG).cfg \
+# 		--traces=../$(SIFT) > $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log 2>&1
+# 	awk 'BEGIN{cycle=-1;} { if($$1 == "CycleTrace") { if (cycle==-1) { cycle=$$2 } else { print $$2 - cycle; cycle=-1;} }}' \
+# 		$(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log > cycle
+# 	if [ -e o3_trace.out ]; then\
+# 		mv -f o3_trace.out $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).konata; gzip -f $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).konata; \
+# 	fi
+# 	if [ -e kanata_trace.log ]; then\
+# 		mv -f kanata_trace.log $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).kanata; gzip -f $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).kanata; \
+# 	fi
+# 	python3 ../../../scripts/dump_sqlite3.py ./sim.stats.sqlite3
+# 	xz -f $(LOG_FILE)_$(L2PREF)_$(L1PREF_POLICY_CFG).log
