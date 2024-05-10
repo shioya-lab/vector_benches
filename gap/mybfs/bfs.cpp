@@ -3,7 +3,7 @@
 #include <vector>
 #include <queue>
 
-int global_id = 1;
+uint64_t global_id = 1;
 
 // #define DEBUG
 
@@ -51,15 +51,18 @@ void bfs_vector(int N,
                 uint32_t *edge_list,
                 uint32_t *visited)
 {
-  std::vector<uint32_t> worklist;
-  worklist.push_back(0);
+  uint32_t *worklist = (uint32_t *)malloc(sizeof(uint32_t)*N);
+  uint32_t *worklist_tail = worklist;
+  uint32_t *worklist_head = worklist;
+  *worklist_head = 0; worklist_head++;
+  // std::vector<uint32_t> worklist;
+  // worklist.push_back(0);
 
-  size_t worklist_front = 0;
-  while (worklist_front != worklist.size()) {
+  while (worklist_tail != worklist_head) {
 
-    size_t worklist_vl = __riscv_vsetvl_e32m1(worklist.size() - worklist_front);
-    vuint32m1_t v_v = __riscv_vle32_v_u32m1(&worklist[worklist_front], worklist_vl);
-    worklist_front += worklist_vl;
+    size_t worklist_vl = __riscv_vsetvl_e32m1(worklist_head - worklist_tail);
+    vuint32m1_t v_v = __riscv_vle32_v_u32m1(worklist_tail, worklist_vl);
+    worklist_tail += worklist_vl;
 
     // Make offset with 32-bit
     vuint32m1_t v_voffset    = __riscv_vsll_vx_u32m1(v_v, 2, worklist_vl);
@@ -85,23 +88,29 @@ void bfs_vector(int N,
         vuint32m1_t v_visited_add   = __riscv_vadd_vx_u32m1_m (v_visited_zero,
                                                                __riscv_viota_m_u32m1 (v_visited_zero, vl),
                                                                global_id, vl);
-        global_id += __riscv_vcpop_m_b32 (v_visited_zero, vl);
+        uint64_t num_visited_zero = __riscv_vcpop_m_b32 (v_visited_zero, vl);
+        global_id += num_visited_zero;
         __riscv_vsuxei32_v_u32m1_m (v_visited_zero, visited, v_nv_offset, v_visited_add, vl);
-        for (int k = 0; k < vl; k++) {
-          uint32_t new_visited = __riscv_vmv_x_s_u32m1_u32(v_visited);
-          uint32_t new_nv      = __riscv_vmv_x_s_u32m1_u32(v_edge_list);
-#ifdef DEBUG
-          fprintf(stderr, "visited[%d](=%d), checking: %d\n", k, new_nv, new_visited);
-#endif // DEBUG
-          if (new_visited == 0) {
-#ifdef DEBUG
-            std::cerr << "worklist push (" << new_nv << ")\n";
-#endif // DEBUG
-            worklist.push_back(new_nv);
-          }
-          v_visited   = __riscv_vslide1down_vx_u32m1(v_visited,   0, vl);
-          v_edge_list = __riscv_vslide1down_vx_u32m1(v_edge_list, 0, vl);
-        }
+
+        vuint32m1_t v_aligned_visited_new = __riscv_vcompress_vm_u32m1(v_edge_list, v_visited_zero, vl);
+        __riscv_vse32_v_u32m1(worklist_head, v_aligned_visited_new, num_visited_zero);
+        worklist_head += num_visited_zero;
+
+        //        for (int k = 0; k < vl; k++) {
+        //          uint32_t new_visited = __riscv_vmv_x_s_u32m1_u32(v_visited);
+        //          uint32_t new_nv      = __riscv_vmv_x_s_u32m1_u32(v_edge_list);
+        //#ifdef DEBUG
+        //          fprintf(stderr, "visited[%d](=%d), checking: %d\n", k, new_nv, new_visited);
+        //#endif // DEBUG
+        //          if (new_visited == 0) {
+        //#ifdef DEBUG
+        //            std::cerr << "worklist push (" << new_nv << ")\n";
+        //#endif // DEBUG
+        //            *(worklist_head++) = new_nv;
+        //          }
+        //          v_visited   = __riscv_vslide1down_vx_u32m1(v_visited,   0, vl);
+        //          v_edge_list = __riscv_vslide1down_vx_u32m1(v_edge_list, 0, vl);
+        //        }
       }
 
       worklist_vl = __riscv_vsetvl_e32m1 (worklist_vl);

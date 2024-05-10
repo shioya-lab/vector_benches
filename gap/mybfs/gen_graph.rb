@@ -10,7 +10,9 @@ pair_set = Set.new
 # 外側のループ: 各頂点に対して
 for i in 0...graph_size
   # 内側のループの上限をランダムに設定
-  j_max = rand(graph_size / 10)
+  # j_max = rand(graph_size / 10)
+  # 一時的に上限を10に設定
+  j_max = rand(10-1)+1
 
   # 内側のループ: ランダムなペアを生成
   for j in 0...j_max

@@ -18,7 +18,7 @@ void bfs_vector(int N,
                 uint32_t *edge_list,
                 uint32_t *visited);
 
-extern int global_id;
+extern uint64_t global_id;
 
 int main() {
   // 頂点数と辺数
