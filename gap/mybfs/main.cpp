@@ -60,7 +60,11 @@ int main() {
   bfs (N, edge_start, edge_size, edge_list, visited);
 
   // 結果出力 (各頂点の頂点 0 からの距離を見る)
-  for (int v = 0; v < N; ++v) std::cout << v << ": " << visited[v] << ' ';
+  for (int v = 0; v < N; ++v) {
+    if (visited[v]) {
+      std::cout << v << ": " << visited[v] << ' ';
+    }
+  }
   std::cout << '\n';
 
 #ifdef __riscv
@@ -88,7 +92,11 @@ int main() {
   printf("vecinst = %lld\n", end_vecinst - start_vecinst);
 
   // 結果出力 (各頂点の頂点 0 からの距離を見る)
-  for (int v = 0; v < N; ++v) std::cout << v << ": " << v_visited[v] << ' ';
+  for (int v = 0; v < N; ++v) {
+    if (visited[v]) {
+      std::cout << v << ": " << v_visited[v] << ' ';
+    }
+  }
   std::cout << '\n';
 
   bool match = true;
