@@ -1,3 +1,6 @@
 [submodule "rivec1.0"]
 	path = rivec1.0
 	url = git@github.com:shioya-lab/rivec1.0.git
+[submodule "graph-v-rvv10"]
+	path = graph-v-rvv10
+	url = git@github.com:shioya-lab/graph-v-rvv10.git
