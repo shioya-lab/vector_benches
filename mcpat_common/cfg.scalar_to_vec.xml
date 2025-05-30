@@ -22,12 +22,15 @@
 
     <macro name="FP_ISSUE_QUEUE_SIZE" value="32"/>
 
-    <macro name="FP_WIDTH" value="64"/>
+    <!-- <macro name="INT_WIDTH" value="path:$(SC0)/cfg/vlen/@roi-end"/> -->
+    <macro name="INT_WIDTH" value="path:$(SC0)/cfg/dlen/@roi-end"/> <!-- when larger than 256, mcpat clashed -->
+    <macro name="FP_WIDTH" value="path:$(SC0)/cfg/dlen/@roi-end"/>
     <macro name="FP_REG_PORTS" value="2"/>
     <macro name="FPU_per_core"  value="2"/>
     <macro name="INORDER" value="0"/>
-    <macro name="LQ_SIZE" value="64"/> <!-- Vector LSQ -->
-    <macro name="SQ_SIZE" value="64"/> <!-- Vector LSQ -->
+    <macro name="LQ_SIZE" value="path:$(SC0)/cfg/outstanding_vec_loads/@roi-end"/>
+    <macro name="SQ_SIZE" value="path:$(SC0)/cfg/outstanding_vec_stores/@roi-end"/>
+    <macro name="LQ_WIDTH" value="52"/> <!-- same as physical address size -->
 
     <macro name="NUM_LOADS" value="path:$(SC0)/L1-D/loads/@roi-length"/>
     <macro name="NUM_STORES" value="path:$(SC0)/L1-D/stores/@roi-length"/>

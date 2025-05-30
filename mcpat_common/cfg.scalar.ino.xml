@@ -22,12 +22,14 @@
 
     <macro name="FP_ISSUE_QUEUE_SIZE" value="32"/>
 
+    <macro name="INT_WIDTH" value="64"/>
     <macro name="FP_WIDTH" value="64"/>
     <macro name="FP_REG_PORTS" value="2"/>
     <macro name="FPU_per_core"  value="2"/>
     <macro name="INORDER" value="1"/>    <!-- InO config but OoO, to extract elements -->
-    <macro name="LQ_SIZE" value="64"/>
-    <macro name="SQ_SIZE" value="64"/>
+    <macro name="LQ_SIZE" value="path:$(SC0)/cfg/outstanding_loads/@roi-end"/>
+    <macro name="SQ_SIZE" value="path:$(SC0)/cfg/outstanding_stores/@roi-end"/>
+    <macro name="LQ_WIDTH" value="52"/> <!-- same as physical address size -->
 
     <macro name="NUM_LOADS" value="path:$(SC0)/L1-D/scalar_loads/@roi-length"/>
     <macro name="NUM_STORES" value="path:$(SC0)/L1-D/scalar_stores/@roi-length"/>

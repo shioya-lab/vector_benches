@@ -22,12 +22,14 @@
 
     <macro name="FP_ISSUE_QUEUE_SIZE" value="32"/>
 
+    <macro name="INT_WIDTH" value="64"/>
     <macro name="FP_WIDTH" value="128"/>
     <macro name="FP_REG_PORTS" value="5"/>  <!-- 2-memory ports / 3-ALU ports -->
     <macro name="INORDER" value="0"/>
-    <macro name="LQ_SIZE" value="64"/>  <!-- Scalar LSQ -->
-    <macro name="SQ_SIZE" value="64"/>  <!-- Scalar LSQ -->
+    <macro name="LQ_SIZE" value="path:$(SC0)/cfg/outstanding_loads/@roi-end"/>  <!-- Scalar LDQ-->
+    <macro name="SQ_SIZE" value="path:$(SC0)/cfg/outstanding_stores/@roi-end"/> <!-- Scalar STQ -->
     <macro name="MEM_ISSUE_WIDTH" value="8"/>
+    <macro name="LQ_WIDTH" value="52"/> <!-- same as physical address size -->
 
     <macro name="NUM_LOADS" value="path:$(SC0)/rob_timer/VtoS_RdRequests/@roi-length"/>
     <macro name="NUM_STORES" value="path:$(SC0)/rob_timer/VtoS_WrRequests/@roi-length"/>

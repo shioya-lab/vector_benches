@@ -4,3 +4,6 @@
 [submodule "graph-v-rvv10"]
 	path = graph-v-rvv10
 	url = git@github.com:shioya-lab/graph-v-rvv10.git
+[submodule "riscv-coremark"]
+	path = riscv-coremark
+	url = https://github.com/riscv-boom/riscv-coremark.git

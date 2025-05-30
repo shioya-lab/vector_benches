@@ -14,7 +14,8 @@
   <!-- macro name="MEM_ISSUE_WIDTH" value="$(MEM_ISSUE_WIDTH)"/ -->
 
   <macro name="ISSUE_QUEUE_SIZE" value="88"/> <!-- INT=64/Scalar LSU 24 -->
-  <macro name="ROB_SIZE" value="160"/>
+  <!-- <macro name="ROB_SIZE" value="160"/> -->
+  <macro name="ROB_SIZE" value="path:$(SC0)/cfg/rob_size/@roi-end"/>
   <!-- macro name="LQ_SIZE" value="$(LQ_SIZE)"/ -->
   <!-- macro name="SQ_SIZE" value="$(SQ_SIZE)"/ -->
 
@@ -56,11 +57,14 @@
   <macro name="NUM_FETCHED_INSNS" value="path:$(SC0)/performance_model/instruction_count/@roi-length"/>
   <macro name="NUM_COMMITTED_INSNS" value="path:$(SC0)/performance_model/instruction_count/@roi-length"/>
 
-  <macro name="NUM_FETCHED_BRANCHES" value="op:add">
+  <!-- <macro name="NUM_FETCHED_BRANCHES" value="op:add">
     <source value="path:$(SC0)/branch_predictor/num-correct/@roi-length"/>
     <source value="path:$(SC0)/branch_predictor/num-incorrect/@roi-length"/>
   </macro>
   <macro name="NUM_BPRED_MISS" value="path:$(SC0)/branch_predictor/num-incorrect/@roi-length"/>
+ -->
+  <macro name="NUM_FETCHED_BRANCHES" value="0"/>
+  <macro name="NUM_BPRED_MISS" value="0"/>
 
   <!-- macro name="NUM_LOADS" value="path:$(SC0)/L1-D/loads/@roi-length"/ -->
   <!-- macro name="NUM_STORES" value="path:$(SC0)/L1-D/stores/@roi-length"/ -->
@@ -729,9 +733,11 @@
     <param name="interconnect_projection_type" value="0"/><!--0: aggressive wire technology; 1: conservative wire technology -->
     <param name="device_type" value="0"/><!--0: HP(High Performance Type); 1: LSTP(Low standby power) 2: LOP (Low Operating Power)  -->
     <param name="longer_channel_device" value="1"/><!-- 0 no use; 1 use when appropriate -->
-    <!-- param name="machine_bits" value="$(FP_WIDTH)"/ -->
-    <param name="machine_bits" value="64"/>
+    <param name="machine_bits" value="$(INT_WIDTH)"/>
+    <!-- <param name="machine_bits" value="64"/> -->
     <param name="fp_reg_width" value="$(FP_WIDTH)"/>
+    <param name="load_queue_width" value="$(LQ_WIDTH)"/>
+    <param name="store_queue_width" value="64"/>
     <param name="virtual_address_width" value="64"/>
     <param name="physical_address_width" value="52"/>
     <param name="virtual_memory_page_size" value="4096"/>

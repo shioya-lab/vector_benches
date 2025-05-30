@@ -37,8 +37,8 @@ endif
 build:
 	$(MAKE) vector scalar
 	$(MAKE) runspike-s runspike-v
-	$(MAKE) runsniper
-	$(MAKE) runmcpat
+# 	$(MAKE) runsniper
+# 	$(MAKE) runmcpat
 
 runsniper:
 	$(MAKE) runsniper-v runsniper-s
