@@ -7,3 +7,9 @@
 [submodule "riscv-coremark"]
 	path = riscv-coremark
 	url = https://github.com/riscv-boom/riscv-coremark.git
+[submodule "graph-v-rvv10-wsg"]
+	path = graph-v-rvv10-wsg
+	url = git@github.com:shioya-lab/graph-v-rvv10.git
+[submodule "gapbs"]
+	path = gapbs
+	url = https://github.com/sbeamer/gapbs.git
