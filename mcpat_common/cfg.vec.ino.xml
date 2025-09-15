@@ -23,13 +23,14 @@
     <macro name="FP_ISSUE_QUEUE_SIZE" value="32"/>
 
     <macro name="INT_WIDTH" value="64"/> <!-- this field is not used. Actually if it sets larger than 256, McPAT generates error -->
-    <macro name="FP_WIDTH" value="path:$(SC0)/cfg/dlen/@roi-end"/>
+    <!-- macro name="FP_WIDTH" value="path:$(SC0)/cfg/dlen/@roi-end"/ -->
+    <macro name="FP_WIDTH" value="64"/>
     <macro name="FP_REG_PORTS" value="3"/>   <!-- 2-memory ports / 4-ALU ports なのだが、ISSUE_WIDTH=2で割られるため、6/2=3にする。無理やり -->
-    <macro name="INORDER" value="1"/> 
+    <macro name="INORDER" value="1"/>
     <macro name="LQ_SIZE" value="0"/>
     <macro name="SQ_SIZE" value="0"/>
     <macro name="MEM_ISSUE_WIDTH" value="4"/>
-    <macro name="LQ_WIDTH" value="path:$(SC0)/cfg/vec_load_queue_size/@roi-end"/>
+    <macro name="LQ_WIDTH" value="path:$(SC0)/cfg/vldq_width/@roi-end"/>
 
     <macro name="NUM_LOADS"        value="path:$(SC0)/L1-D/vec_loads/@roi-length"/>
     <macro name="NUM_STORES"       value="path:$(SC0)/L1-D/vec_stores/@roi-length"/>
