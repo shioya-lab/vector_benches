@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+extra=()
+if [[ -n "${RIVEC_CPPFLAGS:-}" ]]; then
+  # shellcheck disable=SC2206
+  extra+=($RIVEC_CPPFLAGS)
+fi
+if [[ -n "${SNIPER_ROOT:-}" && -d "${SNIPER_ROOT}/include" ]]; then
+  extra+=("-I${SNIPER_ROOT}/include")
+fi
+exec /riscv/bin/clang \
+  --target=riscv64-unknown-elf \
+  --sysroot=/riscv/riscv64-unknown-elf \
+  --gcc-toolchain=/riscv \
+  "${extra[@]}" \
+  "$@"

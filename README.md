@@ -37,6 +37,19 @@ make sift PRAVE_NEXT2_DIR=../prave_next2 BENCH=microbenchmarks/pointer_chase VLE
 
 The output will be created under the benchmark directory (e.g. `pointer_chase_v256.sift`).
 
+### 2d) Generate a SIFT file via QEMU user-mode (experimental)
+
+This uses Sniper's QEMU frontend plugin (`sniper/frontend/qemu-frontend/libqemu-frontend.so`) and requires:
+
+- `prave_next2/sniper` built with `BUILD_QEMU=1` (and `RV8_HOME` available)
+- the benchmark binary to be runnable under `qemu-riscv64` (typically `TARGET_OS=linux`)
+
+Example:
+
+```bash
+make qemu-sift PRAVE_NEXT2_DIR=../prave_next2 BENCH=microbenchmarks/rvv_saxpy VLEN=256 QEMU=qemu-riscv64
+```
+
 ### 2b) Compile everything (microbenchmarks)
 
 This walks `microbenchmarks/**` and builds targets that include `scripts/runspike.mk`.

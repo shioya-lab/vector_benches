@@ -13,3 +13,7 @@
 [submodule "gapbs"]
 	path = gapbs
 	url = https://github.com/sbeamer/gapbs.git
+[submodule "hpcg-v-rvv10"]
+	path = hpcg-v-rvv10
+	url = git@github.com:shioya-lab/hpcg.git
+	branch = rvv10

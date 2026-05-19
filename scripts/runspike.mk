@@ -16,6 +16,7 @@ rvv_sift    ?= $(basename $(notdir $(rvv_target)))_v$(VLEN).sift
 serial_sift ?= $(basename $(notdir $(serial_target))).sift
 
 RUNSPIKE_MK  = $(realpath ../scripts/runspike.mk ../../scripts/runspike.mk)
+RUNQEMU_MK   = $(realpath ../scripts/runqemu.mk ../../scripts/runqemu.mk)
 SNIPER_MK    = $(realpath ../scripts/sniper.mk ../../scripts/sniper.mk)
 MCPAT_MK     = $(realpath ../scripts/mcpat.mk ../../scripts/mcpat.mk)
 SNIPER2MCPAT = $(realpath ../../../sniper2mcpat/sniper2mcpat.py ../../../../sniper2mcpat/sniper2mcpat.py)
@@ -211,3 +212,9 @@ clean:
 	rm -rf bin/*
 	rm -rf *.xz
 	rm -rf *.dmp
+
+# Optional: allow benchmarks that include runspike.mk to also get QEMU user-mode SIFT targets
+# without touching every benchmark Makefile.
+ifneq ($(wildcard $(RUNQEMU_MK)),)
+include $(RUNQEMU_MK)
+endif

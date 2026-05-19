@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 # Necessary for tzdata
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -19,13 +19,22 @@ RUN apt-get autoclean
 RUN dpkg --add-architecture i386
 
 RUN apt-get update && apt-get install -y \
-    python \
+    python3 \
+    python-is-python3 \
     screen \
     tmux \
     binutils \
     libc6:i386 \
     libncurses5:i386 \
     libstdc++6:i386 \
+ && rm -rf /var/lib/apt/lists/*
+
+# For QEMU user-mode (Linux) benchmarks: RISC-V64 cross toolchain + glibc sysroot
+RUN apt-get update && apt-get install -y \
+    gcc-riscv64-linux-gnu \
+    g++-riscv64-linux-gnu \
+    binutils-riscv64-linux-gnu \
+    libc6-riscv64-cross \
  && rm -rf /var/lib/apt/lists/*
 # For building Sniper
 RUN apt-get update && apt-get install -y \
@@ -183,7 +192,7 @@ RUN echo $RISCV
 RUN apt-get update && apt-get install -y sqlite3
 RUN apt-get update && apt-get install -y gnuplot
 RUN apt-get update && apt-get install -y libdb-dev
-RUN apt-get update && apt-get install -y libboost1.71-dev
+RUN apt-get update && apt-get install -y libboost-all-dev
 RUN apt-get update && apt-get install -y build-essential cmake libboost-dev libboost-serialization-dev libboost-filesystem-dev libboost-iostreams-dev libboost-program-options-dev zlib1g-dev libquadmath0
 RUN apt-get update && apt-get install -y valgrind
 RUN apt-get update && apt-get install -y ocaml ocamlbuild autoconf automake indent libtool fig2dev libnum-ocaml-dev
@@ -191,16 +200,54 @@ RUN apt-get update && apt-get install -y libbz2-dev libsqlite3-dev
 
 RUN apt-get update && apt-get install -y python3-pip ninja-build libglib2.0-dev
 
+RUN apt-get update && apt-get install -y python3-tomli
+
+# Build & install SimPoint 3.2 (s117 fork: adds <cstring>/<cstdlib>/<climits>
+# includes and -std=gnu++98 so it builds on modern gcc). Pinned to a specific
+# commit for reproducibility. Installs simpoint to /usr/local/bin (on PATH).
+RUN bash -lc 'set -euo pipefail; \
+    cd /tmp; \
+    curl -fsSL https://github.com/s117/SimPoint/archive/4a5279bb05968a8ffb5e0b576b9ef076828ffd4b.tar.gz \
+      -o SimPoint.tar.gz; \
+    tar xzf SimPoint.tar.gz; \
+    cd SimPoint-4a5279bb05968a8ffb5e0b576b9ef076828ffd4b; \
+    make -j"$(nproc)"; \
+    install -Dm755 bin/simpoint /usr/local/bin/simpoint; \
+    /usr/local/bin/simpoint -h >/dev/null 2>&1 || true; \
+    cd /tmp; rm -rf SimPoint.tar.gz SimPoint-4a5279bb05968a8ffb5e0b576b9ef076828ffd4b'
+
+# Extra QEMU plugin(s) shipped with this repo (build context).
+COPY qemu-plugins/icount.c /tmp/qemu-plugins/icount.c
+COPY qemu-plugins/insnhist.c /tmp/qemu-plugins/insnhist.c
+
 # Start installing QEMU
 WORKDIR /tmp/
-RUN wget https://download.qemu.org/qemu-9.0.0-rc3.tar.xz && \
-    tar xvJf qemu-9.0.0-rc3.tar.xz && \
-    cd qemu-9.0.0-rc3 && \
-    mkdir -p build && cd build && \
-    ../configure --target-list=riscv64-softmmu,riscv64-linux-user --prefix=${RISCV} && \
-    make -j$(nproc) && \
-    make install && \
-    cd ../ && rm -rf build
+RUN bash -lc 'set -euo pipefail; \
+    wget -q https://download.qemu.org/qemu-10.0.0.tar.xz; \
+    tar xJf qemu-10.0.0.tar.xz; \
+    cd qemu-10.0.0; \
+    mkdir -p build; cd build; \
+    ../configure --enable-plugins --target-list=riscv64-softmmu,riscv64-linux-user --prefix="${RISCV}"; \
+    make -j"$(nproc)"; \
+    echo "== QEMU contrib/plugins (pre-install) =="; \
+    ls -la contrib/plugins 2>/dev/null || true; \
+    ls -la ../contrib/plugins 2>/dev/null || true; \
+    plugin_dir=""; \
+    for d in contrib/plugins ../contrib/plugins; do \
+      if [ -f "$d/libbbv.so" ]; then plugin_dir="$d"; break; fi; \
+    done; \
+    test -n "$plugin_dir"; \
+    make install; \
+    mkdir -p "${RISCV}/libexec/qemu-plugins"; \
+    cp -v "$plugin_dir"/*.so "${RISCV}/libexec/qemu-plugins/"; \
+    # Build custom plugins against installed qemu-plugin.h + glib
+    cc -shared -fPIC -O2 -I"${RISCV}/include" $(pkg-config --cflags glib-2.0) \
+      -o "${RISCV}/libexec/qemu-plugins/libicount.so" /tmp/qemu-plugins/icount.c \
+      $(pkg-config --libs glib-2.0); \
+    cc -shared -fPIC -O2 -I"${RISCV}/include" $(pkg-config --cflags glib-2.0) \
+      -o "${RISCV}/libexec/qemu-plugins/libinsnhist.so" /tmp/qemu-plugins/insnhist.c \
+      $(pkg-config --libs glib-2.0); \
+    cd ..; rm -rf build'
 
 RUN apt-get update && apt-get install -y libjemalloc-dev libjemalloc2
 
