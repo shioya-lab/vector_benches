@@ -441,6 +441,52 @@ graph-wsg-cache-%:
 		bash "$(GRAPH_WSG_DECOMPRESS_SHARED)" "$$bz2" "$$out"; \
 		true'
 
+# Inspect / free the decompressed dataset cache ($(GRAPH_WSG_DATASET_CACHE)).
+# Each cached *.sg/*.wsg is pure scratch: it is regenerated on demand from the raw
+# file or .bz2 in GRAPH_WSG_DATASET_DIR (see graph-wsg-cache-%), so the compressed
+# originals are the source of truth and the cache can be dropped between runs.
+# Re-compressing is pointless here -- the .bz2 originals are already kept.
+#   make graph-wsg-cache-status            # list cached files, sizes, regen source
+#   make graph-wsg-cache-clean DRYRUN=1    # show what would be freed, delete nothing
+#   make graph-wsg-cache-clean             # delete only files that have a regen source
+.PHONY: graph-wsg-cache-status graph-wsg-cache-clean
+graph-wsg-cache-status:
+	@bash -lc 'set -euo pipefail; \
+		cache="$(GRAPH_WSG_DATASET_CACHE)"; ddir="$(GRAPH_WSG_DATASET_DIR)"; \
+		test -d "$$cache" || { echo "no cache dir: $$cache"; exit 0; }; \
+		total=0; \
+		for f in "$$cache"/*; do \
+			[ -e "$$f" ] || continue; \
+			base=$$(basename "$$f"); sz=$$(du -b "$$f" | cut -f1); total=$$((total+sz)); \
+			raw="$$ddir/$$base"; bz="$$raw.bz2"; src="(no regen source)"; \
+			if [ -f "$$raw" ] && [ ! "$$raw" -ef "$$f" ]; then src="raw: $$raw"; \
+			elif [ -f "$$bz" ]; then src="bz2: $$bz"; \
+			elif [ -L "$$raw" ]; then tgt=$$(readlink -f "$$raw" 2>/dev/null || true); [ -n "$$tgt" ] && [ -f "$$tgt.bz2" ] && src="bz2: $$tgt.bz2"; fi; \
+			printf "%-16s %6sG  %s\n" "$$base" "$$((sz/1073741824))" "$$src"; \
+		done; \
+		printf "total: %sG in %s\n" "$$((total/1073741824))" "$$cache"'
+
+graph-wsg-cache-clean:
+	@bash -lc 'set -euo pipefail; \
+		cache="$(GRAPH_WSG_DATASET_CACHE)"; ddir="$(GRAPH_WSG_DATASET_DIR)"; dry="$(DRYRUN)"; \
+		test -d "$$cache" || { echo "no cache dir: $$cache (nothing to clean)"; exit 0; }; \
+		freed=0; kept=0; \
+		for f in "$$cache"/*; do \
+			[ -e "$$f" ] || continue; \
+			base=$$(basename "$$f"); \
+			raw="$$ddir/$$base"; bz="$$raw.bz2"; src=""; \
+			if [ -f "$$raw" ] && [ ! "$$raw" -ef "$$f" ]; then src="$$raw"; \
+			elif [ -f "$$bz" ]; then src="$$bz"; \
+			elif [ -L "$$raw" ]; then tgt=$$(readlink -f "$$raw" 2>/dev/null || true); [ -n "$$tgt" ] && [ -f "$$tgt.bz2" ] && src="$$tgt.bz2"; fi; \
+			if [ -z "$$src" ]; then echo "KEEP     $$base (no regen source found)"; kept=$$((kept+1)); continue; fi; \
+			sz=$$(du -b "$$f" | cut -f1); \
+			if [ -n "$$dry" ]; then echo "WOULD-RM $$base ($$((sz/1073741824))G) <- $$src"; \
+			else echo "RM       $$base ($$((sz/1073741824))G) <- $$src"; rm -f "$$f"; fi; \
+			freed=$$((freed+sz)); \
+		done; \
+		if [ -n "$$dry" ]; then printf "[dry-run] would free %sG (%s kept)\n" "$$((freed/1073741824))" "$$kept"; \
+		else printf "freed %sG (%s kept)\n" "$$((freed/1073741824))" "$$kept"; fi'
+
 # Run only the QEMU BBV+icount step for a single graph dataset (no SimPoint/insnhist).
 # Usage examples:
 #   make graph-wsg-qemu-bbv-graph GRAPH=webU SUFFIX=sg
