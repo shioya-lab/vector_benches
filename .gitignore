@@ -18,3 +18,12 @@ ooo.v.*
 ino.v.*
 ooo.s
 ino.s
+
+# Benchmark run outputs (regenerable: SIFT/BBV/SimPoint/datasets/logs)
+graph-wsg-out/
+
+# Large dataset caches — these are what previously bloated .git to 173GB
+*.wsg
+*.sg
+*.bbv
+*.bb.gz
