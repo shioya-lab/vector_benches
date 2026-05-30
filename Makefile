@@ -191,6 +191,23 @@ SIMPOINT_OPTIONS ?= -inputVectorsGzipped -k $(SIMPOINT_K)
 # Interval used by QEMU plugins (also used to convert ROI instruction counts to “lines” in bbv.*.bb).
 GRAPH_WSG_INTERVAL ?= 500000
 
+# SIFT recording layout (instructions, not interval count):
+#   SIFT = [WARMUP_PRE] [INTERVAL: representative] [POST_PAD: safety after representative]
+#   fast_forward starts WARMUP_PRE before the SimPoint-chosen representative interval.
+# Defaults are chosen so the legacy formula (2 lead-in intervals, no tail) is reproduced
+# for GRAPH_WSG_INTERVAL = 500000: WARMUP_PRE = 1000000 (= 2 × interval), POST_PAD = 0,
+# giving the original SIFT length of 3 × interval = 1.5M.
+# When increasing the interval, prefer overriding all three on the command line, e.g.:
+#   make ... GRAPH_WSG_INTERVAL=2000000 GRAPH_WSG_WARMUP_PRE=500000 GRAPH_WSG_POST_PAD=1000000
+GRAPH_WSG_WARMUP_PRE ?= 1000000
+GRAPH_WSG_POST_PAD   ?= 0
+
+# Extra args appended to the graph kernel invocation (bbv / insnhist / sift).
+# e.g. KERNEL_ARGS="-i 5" to cap bc source iters / pr_spmv PR iters on huge graphs.
+# Must be identical across bbv/insnhist/sift of one bench so instruction counts line up.
+# (Command-line overrides auto-propagate to sub-makes via MAKEFLAGS.)
+KERNEL_ARGS ?=
+
 # Output root for pipelines (inside repo, so it’s preserved).
 GRAPH_WSG_OUT ?= $(abspath graph-wsg-out)
 # Shared decompression cache for huge graph datasets.
@@ -251,7 +268,7 @@ graph-wsg-run-qemu-bbv:
 		$(GRAPH_WSG_QEMU_ENV) "$(QEMU)" \
 			-plugin "$$$$plugin_dir/libbbv.so,interval=$(GRAPH_WSG_INTERVAL),outfile=$(DIR)/bbv" \
 			-plugin "$$$$plugin_dir/libicount.so,interval=$(GRAPH_WSG_INTERVAL)" \
-			"$(GRAPH_WSG_BIN_DIR)/$(PROGRAM)" -f "$$$$workload" -v > "$(LOGFILE)" 2>&1'
+			"$(GRAPH_WSG_BIN_DIR)/$(PROGRAM)" -f "$$$$workload" -v $(KERNEL_ARGS) > "$(LOGFILE)" 2>&1'
 
 # Internal: run SimPoint on ROI BBV.
 graph-wsg-run-simpoint:
@@ -293,7 +310,7 @@ graph-wsg-run-qemu-insnhist:
 		cd "$(DIR)"; \
 		$(GRAPH_WSG_QEMU_ENV) "$(QEMU)" \
 			-plugin "$$$$plugin_dir/libinsnhist.so,interval=$(GRAPH_WSG_INTERVAL),start_points=$$$$start_points" \
-			"$(GRAPH_WSG_BIN_DIR)/$(PROGRAM)" -f "$$$$workload" -v > qemu.insnhist.log 2>&1'
+			"$(GRAPH_WSG_BIN_DIR)/$(PROGRAM)" -f "$$$$workload" -v $(KERNEL_ARGS) > qemu.insnhist.log 2>&1'
 
 # Internal: run SIFT generation using Sniper qemu-frontend plugin.
 graph-wsg-run-qemu-sift:
@@ -301,13 +318,13 @@ graph-wsg-run-qemu-sift:
 		test -f "$(GRAPH_WSG_QEMU_SIFT_PLUGIN)" || (echo "ERROR: missing Sniper QEMU frontend plugin: $(GRAPH_WSG_QEMU_SIFT_PLUGIN)" >&2; exit 2); \
 		test -f "$(DIR)/qemu.log.roi" || (echo "ERROR: missing $(DIR)/qemu.log.roi; run bbv first" >&2; exit 2); \
 		test -f "$(DIR)/results.simpts" || (echo "ERROR: missing $(DIR)/results.simpts; run simpoint first" >&2; exit 2); \
-		fast_forward=$$$$(( ( $$$$(head -n1 "$(DIR)/qemu.log.roi") + $$$$(cut -f1 -d" " "$(DIR)/results.simpts") - 2 ) * $(GRAPH_WSG_INTERVAL) )); \
-		detailed=$$$$(( 3 * $(GRAPH_WSG_INTERVAL) )); \
+		fast_forward=$$$$(( ( $$$$(head -n1 "$(DIR)/qemu.log.roi") + $$$$(cut -f1 -d" " "$(DIR)/results.simpts") ) * $(GRAPH_WSG_INTERVAL) - $(GRAPH_WSG_WARMUP_PRE) )); \
+		detailed=$$$$(( $(GRAPH_WSG_WARMUP_PRE) + $(GRAPH_WSG_INTERVAL) + $(GRAPH_WSG_POST_PAD) )); \
 		echo "== graph-wsg: sift ff=$$$$fast_forward detailed=$$$$detailed"; \
 		mkdir -p "$(DIR)"; \
-		$(GRAPH_WSG_QEMU_ENV) "$(QEMU)" \
+		LD_LIBRARY_PATH="$(SNIPER_ROOT)/xed_kit/lib" $(GRAPH_WSG_QEMU_ENV) "$(QEMU)" \
 			-plugin "$(GRAPH_WSG_QEMU_SIFT_PLUGIN),blocksize=10000000,fast_forward_target=$$$$fast_forward,detailed_target=$$$$detailed,output_file=$(DIR)/rvv-test_v1024" \
-			"$(GRAPH_WSG_BIN_DIR)/$(PROGRAM)" -f "$(WORKLOAD)" -v > "$(DIR)/$(PROGRAM).sift.log" 2>&1'
+			"$(GRAPH_WSG_BIN_DIR)/$(PROGRAM)" -f "$(WORKLOAD)" -v $(KERNEL_ARGS) > "$(DIR)/$(PROGRAM).sift.log" 2>&1'
 
 # Map target-shorthand program names back to the actual binary file names.
 # Used because Makefile pattern split-on-underscore can't directly carry program names
@@ -350,14 +367,29 @@ graph_wsg_bbv_%_wsg:
 	$(MAKE) graph-wsg-run-simpoint DIR=$(WORKDIR)
 	$(MAKE) graph-wsg-run-qemu-insnhist DIR=$(WORKDIR) WORKLOAD=$(WORKLOAD) PROGRAM=$(PROGRAM)
 
-# Generic rule: graph_wsg_sift_<prog>_<graph>_<suffix>
-graph_wsg_sift_%: SUFFIX  = $(word 5,$(subst _, ,$@))
-graph_wsg_sift_%: PROGRAM = $(word 4,$(subst _, ,$@)).riscv_rvv10.x
-graph_wsg_sift_%: GRAPH   = $(word 5,$(subst _, ,$@))
-graph_wsg_sift_%: WORKDIR = $(GRAPH_WSG_OUT)/$(patsubst %_$(SUFFIX),%,$(patsubst graph_wsg_sift_%,%,$@))
-graph_wsg_sift_%:
-	@echo "==> graph-wsg SIFT pipeline: graph=$(GRAPH) program=$(PROGRAM) suffix=$(SUFFIX)"
-	$(MAKE) graph-wsg-run-qemu-sift DIR=$(WORKDIR) WORKLOAD=$(GRAPH_WSG_DATASET_DIR)/$(GRAPH).$(SUFFIX) PROGRAM=$(PROGRAM)
+# SIFT rules mirror the BBV rules (graph_wsg_bbv_%_{sg,wsg}): split _sg / _wsg so the
+# dataset extension and WORKDIR are unambiguous, and reuse graph_wsg_prog_to_binary so
+# shorthand program names (ccsv -> cc_sv, prspmv -> pr_spmv) map to the real binaries.
+# WORKLOAD uses the decompressed file in the shared cache (graph-wsg-run-qemu-sift has
+# no decompress fallback). The Sniper SIFT plugin writes rvv-test_v1024.0.sift, so we
+# add the rvv-test_v1024.sift symlink that prepare_directories.py / runeval expect.
+graph_wsg_sift_%_sg: WORKDIR  = $(GRAPH_WSG_OUT)/$(subst _sg,,$(subst graph_wsg_sift_,,$@))
+graph_wsg_sift_%_sg: PROGRAM  = $(call graph_wsg_prog_to_binary,$(word 4,$(subst _, ,$@))).riscv_rvv10.x
+graph_wsg_sift_%_sg: GRAPH    = $(word 5,$(subst _, ,$@))
+graph_wsg_sift_%_sg: WORKLOAD = $(GRAPH_WSG_DATASET_CACHE)/$(GRAPH).sg
+graph_wsg_sift_%_sg:
+	@echo "==> graph-wsg SIFT pipeline (sg): graph=$(GRAPH) program=$(PROGRAM)"
+	$(MAKE) graph-wsg-run-qemu-sift DIR=$(WORKDIR) WORKLOAD=$(WORKLOAD) PROGRAM=$(PROGRAM)
+	ln -sf rvv-test_v1024.0.sift $(WORKDIR)/rvv-test_v1024.sift
+
+graph_wsg_sift_%_wsg: WORKDIR  = $(GRAPH_WSG_OUT)/$(subst _wsg,,$(subst graph_wsg_sift_,,$@))
+graph_wsg_sift_%_wsg: PROGRAM  = $(call graph_wsg_prog_to_binary,$(word 4,$(subst _, ,$@))).riscv_rvv10.x
+graph_wsg_sift_%_wsg: GRAPH    = $(word 5,$(subst _, ,$@))
+graph_wsg_sift_%_wsg: WORKLOAD = $(GRAPH_WSG_DATASET_CACHE)/$(GRAPH).wsg
+graph_wsg_sift_%_wsg:
+	@echo "==> graph-wsg SIFT pipeline (wsg): graph=$(GRAPH) program=$(PROGRAM)"
+	$(MAKE) graph-wsg-run-qemu-sift DIR=$(WORKDIR) WORKLOAD=$(WORKLOAD) PROGRAM=$(PROGRAM)
+	ln -sf rvv-test_v1024.0.sift $(WORKDIR)/rvv-test_v1024.sift
 
 # Meta targets (road/twitter/urand/web/kronU datasets).
 GRAPH_WSG_DATASETS_SG  ?= kronU roadU twitterU urandU webU
